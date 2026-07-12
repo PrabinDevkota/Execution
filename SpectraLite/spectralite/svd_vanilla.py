@@ -27,6 +27,21 @@ DEFAULT_COMPRESS_SUFFIXES: tuple[str, ...] = (
     "down_proj",
 )
 
+ATTN_COMPRESS_SUFFIXES: tuple[str, ...] = (
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "out_proj",
+)
+
+MLP_COMPRESS_SUFFIXES: tuple[str, ...] = (
+    "fc1",
+    "fc2",
+    "gate_proj",
+    "up_proj",
+    "down_proj",
+)
+
 
 def _leaf_name(qualified: str) -> str:
     return qualified.rsplit(".", 1)[-1]

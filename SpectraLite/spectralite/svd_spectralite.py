@@ -96,20 +96,32 @@ def build_whitened_svd_cache(
     return cache
 
 
-def cache_to_alloc_metas(cache: dict[str, dict[str, Any]]) -> list[LayerAllocMeta]:
+def cache_to_alloc_metas(
+    cache: dict[str, dict[str, Any]],
+    *,
+    protect_mode: str = "full",
+) -> list[LayerAllocMeta]:
     """Convert whitened SVD cache into allocator metadata."""
+    from spectralite.spectral import protect_score
+
     metas: list[LayerAllocMeta] = []
     for name, entry in cache.items():
+        q = int(entry["q"])
+        rho = float(entry["rho_eff"])
+        sr = float(entry["stable_rank"])
+        protect = protect_score(
+            rho_eff=rho, stable_rank_val=sr, q=q, mode=protect_mode
+        )
         metas.append(
             LayerAllocMeta(
                 name=name,
                 in_features=int(entry["in_features"]),
                 out_features=int(entry["out_features"]),
-                q=int(entry["q"]),
-                rho_eff=float(entry["rho_eff"]),
+                q=q,
+                rho_eff=rho,
                 compressibility=float(entry["compressibility"]),
-                stable_rank=float(entry["stable_rank"]),
-                protect=float(entry["protect"]),
+                stable_rank=sr,
+                protect=protect,
             )
         )
     return metas
@@ -258,9 +270,10 @@ def allocate_and_compress(
     *,
     clone: bool = True,
     kappa_max: Optional[float] = None,
+    protect_mode: str = "full",
 ) -> dict[str, Any]:
     """Allocate ranks under ``target_keep_ratio`` and build compressed model."""
-    metas = cache_to_alloc_metas(cache)
+    metas = cache_to_alloc_metas(cache, protect_mode=protect_mode)
     alloc = allocate_ranks_for_budget(metas, target_keep_ratio)
     packed = apply_spectralite_ranks(
         model, cache, alloc["ranks"], clone=clone, kappa_max=kappa_max
@@ -272,6 +285,7 @@ def allocate_and_compress(
         packed["summary"]["param_keep_ratio_touched"]
     )
     packed["summary"]["lambda"] = alloc["lambda"]
+    packed["summary"]["protect_mode"] = protect_mode
     return packed
 
 

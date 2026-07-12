@@ -62,7 +62,34 @@ def stable_rank(singular_values: torch.Tensor) -> float:
     return float(val) if math.isfinite(val) else 1.0
 
 
-def spectrum_metrics(singular_values: torch.Tensor) -> dict[str, Any]:
+def protect_score(
+    *,
+    rho_eff: float,
+    stable_rank_val: float,
+    q: int,
+    mode: str = "full",
+) -> float:
+    """Per-matrix protect score for rank allocation (Phase 4/7).
+
+    Modes:
+      - ``full``: (ρ_eff/q) * (stable_rank/q) — default SpectraLite
+      - ``rho``: ρ_eff/q — spectral-only
+      - ``stable_rank``: stable_rank/q — importance-only
+      - ``uniform``: 1.0 — equal protect (allocator ≈ uniform keep)
+    """
+    q = max(int(q), 1)
+    mode = (mode or "full").lower()
+    if mode in {"uniform", "equal"}:
+        return 1.0
+    if mode in {"rho", "rho_only", "spectral"}:
+        return float(rho_eff) / float(q)
+    if mode in {"stable_rank", "sr", "stable"}:
+        return float(stable_rank_val) / float(q)
+    # full
+    return (float(rho_eff) / float(q)) * (float(stable_rank_val) / float(q))
+
+
+def spectrum_metrics(singular_values: torch.Tensor, *, protect_mode: str = "full") -> dict[str, Any]:
     """Bundle spectral statistics used by the Phase-4 allocator."""
     q = int(singular_values.numel())
     rho = effective_rank(singular_values)
@@ -74,6 +101,6 @@ def spectrum_metrics(singular_values: torch.Tensor) -> dict[str, Any]:
         "rho_eff": rho,
         "compressibility": s_comp,
         "stable_rank": a,
-        # Protection share ∈ (0,1]: flat + important spectra keep more rank.
-        "protect": (rho / max(q, 1)) * (a / max(q, 1)),
+        "protect_mode": protect_mode,
+        "protect": protect_score(rho_eff=rho, stable_rank_val=a, q=q, mode=protect_mode),
     }
