@@ -1,0 +1,99 @@
+{
+  "method": "dense",
+  "tasks": [
+    "piqa",
+    "arc_easy",
+    "arc_challenge",
+    "hellaswag",
+    "winogrande",
+    "boolq",
+    "openbookqa"
+  ],
+  "num_fewshot": 0,
+  "batch_size": 8,
+  "limit": null,
+  "per_task": {
+    "piqa": {
+      "acc": 0.6207834602829162,
+      "raw": {
+        "name": "piqa",
+        "alias": "piqa",
+        "sample_len": 1838,
+        "acc,none": 0.6284004352557128,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.6207834602829162,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "arc_easy": {
+      "acc": 0.3998316498316498,
+      "raw": {
+        "name": "arc_easy",
+        "alias": "arc_easy",
+        "sample_len": 2376,
+        "acc,none": 0.43013468013468015,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.3998316498316498,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "arc_challenge": {
+      "acc": 0.22440273037542663,
+      "raw": {
+        "name": "arc_challenge",
+        "alias": "arc_challenge",
+        "sample_len": 1172,
+        "acc,none": 0.1885665529010239,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.22440273037542663,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "hellaswag": {
+      "acc": 0.3157737502489544,
+      "raw": {
+        "name": "hellaswag",
+        "alias": "hellaswag",
+        "sample_len": 10042,
+        "acc,none": 0.29247161919936265,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.3157737502489544,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "winogrande": {
+      "acc": 0.5146014206787688,
+      "raw": {
+        "name": "winogrande",
+        "alias": "winogrande",
+        "sample_len": 1267,
+        "acc,none": 0.5146014206787688,
+        "acc_stderr,none": "N/A"
+      }
+    },
+    "boolq": {
+      "acc": 0.5617737003058104,
+      "raw": {
+        "name": "boolq",
+        "alias": "boolq",
+        "sample_len": 3270,
+        "acc,none": 0.5617737003058104,
+        "acc_stderr,none": "N/A"
+      }
+    },
+    "openbookqa": {
+      "acc": 0.288,
+      "raw": {
+        "name": "openbookqa",
+        "alias": "openbookqa",
+        "sample_len": 500,
+        "acc,none": 0.166,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.288,
+        "acc_norm_stderr,none": "N/A"
+      }
+    }
+  },
+  "zero_shot_avg": 0.4178809588176466,
+  "notes": "Phase 8 dense OPT-125M baseline"
+}

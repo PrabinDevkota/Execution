@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T18:10:43Z",
+  "updated_at": "2026-07-12T18:38:16Z",
   "phases": {
     "0": {
       "complete": true,
@@ -158,6 +158,31 @@
         "best_c4": 31.000944137573242
       },
       "notes": "Phase 7 ablations: whitening, gate, LW, attn/MLP, SpectraLite protect modes, calib size."
+    },
+    "8": {
+      "complete": true,
+      "completed_at": "2026-07-12T18:38:16Z",
+      "artifacts": {
+        "summary": "results/phase8_summary.json",
+        "table": "results/phase8_table.json",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "num_methods": 4,
+        "tasks": [
+          "piqa",
+          "arc_easy",
+          "arc_challenge",
+          "hellaswag",
+          "winogrande",
+          "boolq",
+          "openbookqa"
+        ],
+        "best_method": "dense",
+        "best_zero_shot_avg": 0.4178809588176466,
+        "dense_avg": 0.4178809588176466
+      },
+      "notes": "Zero-shot lm-eval on dense, ActSVD, gated ActSVD, SpectraLite-rho at ratio=0.5/keep=0.75."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
