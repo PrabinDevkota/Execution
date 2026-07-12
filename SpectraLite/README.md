@@ -52,17 +52,30 @@ SpectraLite/
 
 ```bash
 cd SpectraLite
-pip install -r requirements.txt
+pip install -r requirements.txt          # local (includes torch)
+# pip install -r requirements-colab.txt  # Colab only — never reinstalls torch
 ```
 
-Open and run:
+### Colab workflow (recommended)
 
-```text
-notebooks/Phase0_Setup.ipynb
+1. Runtime → **GPU (A100)**  
+2. Open and run **`notebooks/Colab_Bootstrap.ipynb` once** per new runtime  
+   (clone/pull + Colab-safe deps + CUDA check)  
+3. Then open the phase you need (`Phase0_Setup.ipynb`, later `Phase1_…`, etc.)
+
+Or one cell at the top of any phase notebook:
+
+```python
+from spectralite.colab_setup import ensure_environment
+ensure_environment()
 ```
 
-On Colab, the first notebook cell installs dependencies and adds the repo root to `sys.path`
-so `import spectralite` resolves without installing the package.
+Dependency files:
+
+| File | Use when |
+|------|----------|
+| `requirements-colab.txt` | Google Colab (no torch — keeps CUDA wheel) |
+| `requirements.txt` | Local machine / non-Colab |
 
 ---
 
