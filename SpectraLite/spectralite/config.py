@@ -50,6 +50,7 @@ class Config:
     calib_batch_size: int = 2
     whitening_ridge: float = 1e-2
     kappa_max: float = 1e4
+    kappa_speed: float = 1.0
     ppl_seq_len: int = 512
     ppl_max_tokens: int = 50_000
     latency_warmup: int = 10

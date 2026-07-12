@@ -104,17 +104,24 @@ def apply_activation_aware_svd(
     ridge: float = 1e-2,
     cov_method: str = "ridge",
     kappa_max: Optional[float] = None,
+    latency_gate: bool = False,
+    kappa_speed: float = 1.0,
     suffixes: Sequence[str] = DEFAULT_COMPRESS_SUFFIXES,
     clone: bool = True,
 ) -> dict[str, Any]:
     """Replace Linear layers using activation-whitened truncated SVD.
 
     Layers without collected activations are left dense.
+    When ``latency_gate=True``, layers with ``r ≥ κ_speed·mn/(m+n)`` stay dense
+    (Phase 6 feasibility gate).
     """
+    from spectralite.latency_gate import gate_decision
+
     target = copy.deepcopy(model) if clone else model
     target.eval()
 
     replacements: list[dict[str, Any]] = []
+    gated_dense: list[dict[str, Any]] = []
     dense_params = 0
     lowrank_params = 0
     skipped: list[str] = []
@@ -142,15 +149,47 @@ def apply_activation_aware_svd(
 
         m, n = int(linear.out_features), int(linear.in_features)
         rank = choose_rank(n, m, rank_ratio)
+        decision = gate_decision(n, m, rank, kappa_speed=kappa_speed)
+        dense_n = linear.weight.numel() + (linear.bias.numel() if linear.bias is not None else 0)
+
+        if latency_gate and not decision["passes_gate"]:
+            gated_dense.append({"name": name, **decision, "dense_params": dense_n})
+            dense_params += dense_n
+            lowrank_params += dense_n  # unchanged
+            logger.info(
+                "Latency-gate KEEP DENSE %s: r=%d ≥ thresh=%.1f (be=%.1f κ=%.2f)",
+                name,
+                rank,
+                decision["latency_threshold"],
+                decision["flop_break_even"],
+                kappa_speed,
+            )
+            continue
+
         cov = estimate_input_covariance(acts, ridge=ridge, method=cov_method)
         u_hat, v_hat, stab = _activation_aware_factors(
             linear.weight, cov, rank, kappa_max=kappa_max
         )
         rank = int(stab["rank"])
+        # Re-check gate after κ bump (Phase 5+6 interaction)
+        if latency_gate:
+            decision = gate_decision(n, m, rank, kappa_speed=kappa_speed)
+            if not decision["passes_gate"]:
+                gated_dense.append(
+                    {
+                        "name": name,
+                        **decision,
+                        "dense_params": dense_n,
+                        "note": "failed_gate_after_kappa_bump",
+                    }
+                )
+                dense_params += dense_n
+                lowrank_params += dense_n
+                continue
+
         lr = lowrank_from_factors(linear, u_hat, v_hat)
         set_module_by_name(target, name, lr)
 
-        dense_n = linear.weight.numel() + (linear.bias.numel() if linear.bias is not None else 0)
         lr_n = lr.param_count
         dense_params += dense_n
         lowrank_params += lr_n
@@ -165,6 +204,9 @@ def apply_activation_aware_svd(
                 "ridge": ridge,
                 "cov_method": cov_method,
                 "kappa_max": kappa_max,
+                "latency_gate": latency_gate,
+                "kappa_speed": kappa_speed,
+                "latency_threshold": decision["latency_threshold"],
                 "kappa_cov": stab["kappa_cov"],
                 "kappa_trunc": stab["kappa_trunc"],
                 "kappa_bumped": stab["kappa_bumped"],
@@ -196,9 +238,13 @@ def apply_activation_aware_svd(
         "ridge": ridge,
         "cov_method": cov_method,
         "kappa_max": kappa_max,
+        "latency_gate": latency_gate,
+        "kappa_speed": kappa_speed,
         "num_replaced": len(replacements),
+        "num_gated_dense": len(gated_dense),
         "num_skipped": len(skipped),
         "skipped": skipped,
+        "gated_dense": gated_dense,
         "dense_params_touched": dense_params,
         "lowrank_params_touched": lowrank_params,
         "params_saved_touched": dense_params - lowrank_params,
@@ -206,6 +252,8 @@ def apply_activation_aware_svd(
         "replacements": replacements,
         "mean_recon_rel_error": (
             sum(r["recon_rel_error"] for r in replacements) / max(len(replacements), 1)
+            if replacements
+            else float("nan")
         ),
         "num_kappa_bumped": sum(1 for r in replacements if r.get("kappa_bumped")),
     }
@@ -215,9 +263,12 @@ def apply_activation_aware_svd(
 def print_actsvd_summary(summary: dict[str, Any]) -> None:
     """Pretty-print activation-aware SVD summary."""
     print_section(
-        f"Activation-aware SVD — ratio={summary['rank_ratio']} ridge={summary['ridge']}"
+        f"Activation-aware SVD — ratio={summary['rank_ratio']} "
+        f"cov={summary.get('cov_method', 'ridge')} "
+        f"gate={summary.get('latency_gate', False)}"
     )
     print_kv("Layers replaced", summary["num_replaced"])
+    print_kv("Layers gated dense", summary.get("num_gated_dense", 0))
     print_kv("Layers skipped", summary["num_skipped"])
     print_kv("Dense params (touched)", f"{summary['dense_params_touched']:,}")
     print_kv("Low-rank params (touched)", f"{summary['lowrank_params_touched']:,}")

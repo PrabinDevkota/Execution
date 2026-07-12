@@ -144,3 +144,76 @@ def measure_decode_latency(
         "throughput_tokens_per_s": throughput,
         "reps": float(len(times_ms)),
     }
+
+
+@torch.inference_mode()
+def measure_prefill_cuda_graph(
+    model: nn.Module,
+    input_ids: torch.Tensor,
+    *,
+    attention_mask: Optional[torch.Tensor] = None,
+    warmup: int = 5,
+    reps: int = 30,
+) -> dict[str, float]:
+    """CUDA-graph replay of a fixed-shape prefill forward (Phase 6).
+
+    Falls back to ``measure_prefill_latency`` if graph capture fails (common
+    with dynamic HF control flow). Factor fusion is already in ``LowRankLinear``.
+    """
+    device = get_model_device(model)
+    if device.type != "cuda":
+        return {
+            **measure_prefill_latency(
+                model, input_ids, attention_mask=attention_mask, warmup=warmup, reps=reps
+            ),
+            "cuda_graph": 0.0,
+        }
+
+    input_ids = input_ids.to(device)
+    kwargs: dict[str, Any] = {"input_ids": input_ids, "use_cache": False}
+    if attention_mask is not None:
+        kwargs["attention_mask"] = attention_mask.to(device)
+
+    try:
+        # Warmup outside graph (cuDNN autotune etc.)
+        for _ in range(max(warmup, 1)):
+            _ = model(**kwargs)
+        torch.cuda.synchronize(device)
+
+        g = torch.cuda.CUDAGraph()
+        static_kwargs = {k: v.clone() if torch.is_tensor(v) else v for k, v in kwargs.items()}
+        # Capture
+        s = torch.cuda.Stream()
+        s.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(s):
+            with torch.cuda.graph(g):
+                _ = model(**static_kwargs)
+        torch.cuda.current_stream().wait_stream(s)
+
+        times_ms: list[float] = []
+        for _ in range(max(reps, 1)):
+            start = torch.cuda.Event(enable_timing=True)
+            end = torch.cuda.Event(enable_timing=True)
+            start.record()
+            g.replay()
+            end.record()
+            torch.cuda.synchronize(device)
+            times_ms.append(float(start.elapsed_time(end)))
+
+        mean = sum(times_ms) / len(times_ms)
+        var = sum((t - mean) ** 2 for t in times_ms) / max(len(times_ms) - 1, 1)
+        logger.info("CUDA-graph prefill OK: %.3f ms mean", mean)
+        return {
+            "prefill_ms_mean": mean,
+            "prefill_ms_std": var**0.5,
+            "prefill_ms_median": sorted(times_ms)[len(times_ms) // 2],
+            "reps": float(len(times_ms)),
+            "cuda_graph": 1.0,
+        }
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("CUDA-graph prefill failed (%s); using eager timing", exc)
+        out = measure_prefill_latency(
+            model, input_ids, attention_mask=attention_mask, warmup=warmup, reps=reps
+        )
+        out["cuda_graph"] = 0.0
+        return out

@@ -38,6 +38,7 @@ def restore_session(
     skip3 = should_skip_phase("3", config=cfg)
     skip4 = should_skip_phase("4", config=cfg)
     skip5 = should_skip_phase("5", config=cfg)
+    skip6 = should_skip_phase("6", config=cfg)
 
     phase0_summary = None
     phase1_summary = None
@@ -45,6 +46,7 @@ def restore_session(
     phase3_summary = None
     phase4_summary = None
     phase5_summary = None
+    phase6_summary = None
     if skip0:
         try:
             phase0_summary = read_json("phase0_summary.json", cfg)
@@ -87,6 +89,13 @@ def restore_session(
         except FileNotFoundError:
             logger.warning("Phase 5 marked complete but summary JSON missing")
             skip5 = False
+    if skip6:
+        try:
+            phase6_summary = read_json("phase6_summary.json", cfg)
+            print_kv("Loaded Phase 6 summary", "results/phase6_summary.json")
+        except FileNotFoundError:
+            logger.warning("Phase 6 marked complete but summary JSON missing")
+            skip6 = False
 
     planned = ["1", "2", "3", "4", "5", "6", "7", "8"]
     next_needs_model = force_reload_model or any(
@@ -114,11 +123,13 @@ def restore_session(
         "skip_phase3": skip3,
         "skip_phase4": skip4,
         "skip_phase5": skip5,
+        "skip_phase6": skip6,
         "phase0_summary": phase0_summary,
         "phase1_summary": phase1_summary,
         "phase2_summary": phase2_summary,
         "phase3_summary": phase3_summary,
         "phase4_summary": phase4_summary,
         "phase5_summary": phase5_summary,
+        "phase6_summary": phase6_summary,
         "force_reload_model": force_reload_model,
     }
