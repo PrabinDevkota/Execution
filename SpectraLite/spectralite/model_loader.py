@@ -136,12 +136,17 @@ def load_model(
         map_strategy,
     )
 
-    model = AutoModelForCausalLM.from_pretrained(
-        name,
-        torch_dtype=dtype,
-        device_map=map_strategy,
-        trust_remote_code=cfg.trust_remote_code,
-    )
+    # Prefer `dtype=` (current HF API); fall back to `torch_dtype=` for older installs.
+    load_kwargs = {
+        "device_map": map_strategy,
+        "trust_remote_code": cfg.trust_remote_code,
+    }
+    try:
+        model = AutoModelForCausalLM.from_pretrained(name, dtype=dtype, **load_kwargs)
+    except TypeError:
+        model = AutoModelForCausalLM.from_pretrained(
+            name, torch_dtype=dtype, **load_kwargs
+        )
     model.eval()
     return model
 

@@ -1,5 +1,10 @@
-# SpectraLite — Phase 0 dependencies
-# Pin torch>=2.2 for torch.utils.flop_counter.FlopCounterMode (used in later phases).
+# SpectraLite — Phase 0 dependencies (local / non-Colab)
+# Pin torch>=2.2 for torch.utils.flop_counter.FlopCounterMode (later phases).
+#
+# On Google Colab: do NOT pip-install torch from this file.
+# Colab already ships a CUDA-enabled PyTorch; reinstalling often
+# replaces it with a CPU-only wheel and breaks GPU. Use
+# requirements-colab.txt (or the Phase0 notebook install cell) instead.
 
 torch>=2.2
 transformers>=4.40.0

@@ -1,0 +1,14 @@
+# SpectraLite — Colab dependencies (CUDA torch is provided by the runtime).
+# Intentionally omits torch / torchvision / torchaudio.
+
+transformers>=4.40.0
+accelerate>=0.30.0
+datasets>=2.19.0
+evaluate>=0.4.0
+lm-eval>=0.4.0
+calflops>=0.3.0
+scikit-learn>=1.4.0
+numpy>=1.26.0
+pandas>=2.2.0
+matplotlib>=3.8.0
+tqdm>=4.66.0
