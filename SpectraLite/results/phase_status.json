@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T16:29:16Z",
+  "updated_at": "2026-07-12T16:58:54Z",
   "phases": {
     "0": {
       "complete": true,
@@ -19,7 +19,7 @@
     },
     "1": {
       "complete": true,
-      "completed_at": "2026-07-12T16:08:32Z",
+      "completed_at": "2026-07-12T16:47:15Z",
       "artifacts": {
         "summary": "results/phase1_summary.json",
         "csv": "results/phase1_dense_baselines.csv",
@@ -27,13 +27,13 @@
       },
       "metrics": {
         "empirical_flops_fwd": 32231129088,
-        "prefill_ms_mean": 7.213670387268066,
-        "decode_ms_per_token_mean": 7.14000727335612,
-        "ppl_wikitext2": null,
+        "prefill_ms_mean": 7.2976383781433105,
+        "decode_ms_per_token_mean": 7.238991053899129,
+        "ppl_wikitext2": 43.963069915771484,
         "ppl_ptb": null,
-        "ppl_c4": 28.740318298339844
+        "ppl_c4": 28.740310668945312
       },
-      "notes": "Dense baseline. Skip re-run on new Colab unless FORCE_RERUN_PHASE1=True."
+      "notes": "Dense baseline (FORCE rerun). WT2 fixed; PTB still NaN (dataset id). Skip unless FORCE_RERUN_PHASE1=True."
     },
     "2": {
       "complete": true,
@@ -56,6 +56,29 @@
         "last_prefill_ms": 9.686220868428547
       },
       "notes": "Vanilla Eckart-Young SVD with fused LowRankLinear; uniform ratios."
+    },
+    "3": {
+      "complete": true,
+      "completed_at": "2026-07-12T16:58:54Z",
+      "artifacts": {
+        "summary": "results/phase3_summary.json",
+        "replacements": "results/phase3_replacements.json",
+        "calibration": "results/phase3_calibration_meta.json",
+        "csv": "results/phase3_activation_aware_svd.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "rank_ratios": [
+          0.5,
+          0.4,
+          0.3
+        ],
+        "num_settings": 3,
+        "last_method": "actsvd_r0.30",
+        "last_ppl_c4": 2286.5126953125,
+        "last_prefill_ms": 9.975671513875325
+      },
+      "notes": "Activation-whitened truncated SVD (SVD-LLM/ASVD-style Cholesky + ridge)."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
