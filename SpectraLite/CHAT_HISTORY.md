@@ -1,7 +1,11 @@
 # SpectraLite — Chat / Progress Record
 
-Last updated: 2026-07-13 (IST)  
-Repo: https://github.com/PrabinDevkota/Execution (path `SpectraLite/`)  
+Last updated: 2026-07-13 (IST)
+
+**GitHub (public):** https://github.com/PrabinDevkota/Execution  
+**Project path in repo:** `SpectraLite/`  
+**Clone / Colab:** open notebooks from that GitHub tree (not local Files double-click).
+
 Dev model: `facebook/opt-125m` · Hardware: Colab NVIDIA A100  
 Primary notebook: `notebooks/works.ipynb`  
 Paper draft (local, gitignored): `latex_code.tex`

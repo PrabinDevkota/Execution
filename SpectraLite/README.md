@@ -2,15 +2,17 @@
 
 **Training-free, post-training SVD compression for decoder-only Transformer LLMs.**
 
-SpectraLite allocates per-matrix rank from the spectral structure of activation-whitened
-weights (effective rank / normalized spectral entropy) under a global FLOP budget, fused
-with task-sensitivity weighting and numerical-stability safeguards, and constrains
-allocation with a hardware latency-feasibility gate so theoretical FLOP reductions convert
-to measured wall-clock decode speedup.
+**GitHub:** https://github.com/PrabinDevkota/Execution (this project lives in `SpectraLite/`)
 
-> **Current status:** Phase 0 — project structure and environment verification only.
-> Compression, SVD, whitening, rank allocation, and latency engineering are intentionally
-> **not** implemented yet.
+SpectraLite allocates per-matrix rank from the spectral structure of activation-whitened
+weights (effective rank / normalized spectral entropy) under a global FLOP budget, with
+optional sensitivity/stability modules and a hardware latency-feasibility gate so theoretical
+FLOP reductions can convert to measured wall-clock gains.
+
+> **Current status (OPT-125M, Phases 0–8 complete):** whitening, ActSVD, SpectraLite-ρ,
+> latency gate, ablations, and lm-eval zero-shot are in `results/`. Next: SpectraLite-ρ+gate,
+> then LLaMA-3.2-1B / OPT-1.3B. See `CHAT_HISTORY.md` for the progress record.
+> Primary Colab notebook: `notebooks/works.ipynb`.
 
 ---
 
