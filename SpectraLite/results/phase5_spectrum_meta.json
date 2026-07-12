@@ -1,0 +1,438 @@
+{
+  "cov_method": "ledoit_wolf",
+  "kappa_max": 10000.0,
+  "layers": {
+    "model.decoder.layers.0.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 238.70286475425237,
+      "protect": 0.004147979823426912,
+      "kappa_cov": 3704.603315407677
+    },
+    "model.decoder.layers.0.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 452.8602140427369,
+      "protect": 0.007025459005916316,
+      "kappa_cov": 3704.603315407677
+    },
+    "model.decoder.layers.0.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 271.66398587455257,
+      "protect": 0.005775530643649475,
+      "kappa_cov": 3704.603315407677
+    },
+    "model.decoder.layers.0.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 329.7080159462808,
+      "protect": 0.00393679467627629,
+      "kappa_cov": 2956.4741929037764
+    },
+    "model.decoder.layers.0.fc1": {
+      "q": 768,
+      "rho_eff": 482.453095552622,
+      "protect": 0.0029915171236249856,
+      "kappa_cov": 21826.97362798793
+    },
+    "model.decoder.layers.0.fc2": {
+      "q": 768,
+      "rho_eff": 230.33994316398986,
+      "protect": 0.0003986144724593484,
+      "kappa_cov": 39493.40028589524
+    },
+    "model.decoder.layers.1.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 195.36524343943003,
+      "protect": 0.002446198747059435,
+      "kappa_cov": 3485.743123037949
+    },
+    "model.decoder.layers.1.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 425.98428240819015,
+      "protect": 0.007269089838261776,
+      "kappa_cov": 3485.743123037949
+    },
+    "model.decoder.layers.1.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 238.66342114434096,
+      "protect": 0.00291025214910267,
+      "kappa_cov": 3485.743123037949
+    },
+    "model.decoder.layers.1.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 313.29306457012086,
+      "protect": 0.004509503287245826,
+      "kappa_cov": 2172.0198650776065
+    },
+    "model.decoder.layers.1.fc1": {
+      "q": 768,
+      "rho_eff": 567.4142560384927,
+      "protect": 0.013060387071317188,
+      "kappa_cov": 5348.081199780011
+    },
+    "model.decoder.layers.1.fc2": {
+      "q": 768,
+      "rho_eff": 383.3469821098426,
+      "protect": 0.000691562824277703,
+      "kappa_cov": 10462.110137734111
+    },
+    "model.decoder.layers.2.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 297.4503140525655,
+      "protect": 0.004083901690506387,
+      "kappa_cov": 69703.3801327669
+    },
+    "model.decoder.layers.2.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 430.68023998743814,
+      "protect": 0.008403224126414987,
+      "kappa_cov": 69703.3801327669
+    },
+    "model.decoder.layers.2.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 312.1209837798985,
+      "protect": 0.0036817117088682933,
+      "kappa_cov": 69703.3801327669
+    },
+    "model.decoder.layers.2.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 423.34282988135107,
+      "protect": 0.00962674844458029,
+      "kappa_cov": 4503.1307029856125
+    },
+    "model.decoder.layers.2.fc1": {
+      "q": 768,
+      "rho_eff": 563.9503521330981,
+      "protect": 0.011864171753450448,
+      "kappa_cov": 1732.5129009619932
+    },
+    "model.decoder.layers.2.fc2": {
+      "q": 768,
+      "rho_eff": 174.53403713832455,
+      "protect": 0.00029882369111116936,
+      "kappa_cov": 35602.713671623445
+    },
+    "model.decoder.layers.3.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 288.7210958909921,
+      "protect": 0.002311387797469586,
+      "kappa_cov": 91372.28953343512
+    },
+    "model.decoder.layers.3.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 453.8600967851161,
+      "protect": 0.00971652273647166,
+      "kappa_cov": 91372.28953343512
+    },
+    "model.decoder.layers.3.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 304.0391599734288,
+      "protect": 0.0022514469330789594,
+      "kappa_cov": 91372.28953343512
+    },
+    "model.decoder.layers.3.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 484.62373243577656,
+      "protect": 0.02114581147217491,
+      "kappa_cov": 903.8425121398205
+    },
+    "model.decoder.layers.3.fc1": {
+      "q": 768,
+      "rho_eff": 569.6979549022803,
+      "protect": 0.015244908731101325,
+      "kappa_cov": 1387.1097274402402
+    },
+    "model.decoder.layers.3.fc2": {
+      "q": 768,
+      "rho_eff": 424.55435440416375,
+      "protect": 0.0008028218159988669,
+      "kappa_cov": 13701.47248658191
+    },
+    "model.decoder.layers.4.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 326.6142388085357,
+      "protect": 0.002816614960295431,
+      "kappa_cov": 39264.543353912304
+    },
+    "model.decoder.layers.4.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 466.81698631522266,
+      "protect": 0.011423927441397197,
+      "kappa_cov": 39264.543353912304
+    },
+    "model.decoder.layers.4.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 341.30452594330507,
+      "protect": 0.0032963221267207927,
+      "kappa_cov": 39264.543353912304
+    },
+    "model.decoder.layers.4.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 503.61230621150145,
+      "protect": 0.019684246887753613,
+      "kappa_cov": 536.5363876998274
+    },
+    "model.decoder.layers.4.fc1": {
+      "q": 768,
+      "rho_eff": 584.5712402846037,
+      "protect": 0.018176651118812212,
+      "kappa_cov": 1296.120334109806
+    },
+    "model.decoder.layers.4.fc2": {
+      "q": 768,
+      "rho_eff": 525.4857503807166,
+      "protect": 0.001100886561380902,
+      "kappa_cov": 9836.14953173436
+    },
+    "model.decoder.layers.5.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 319.073295729261,
+      "protect": 0.0029655012181009736,
+      "kappa_cov": 23964.09741427163
+    },
+    "model.decoder.layers.5.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 493.7514317141936,
+      "protect": 0.01751189063734759,
+      "kappa_cov": 23964.09741427163
+    },
+    "model.decoder.layers.5.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 339.58448632363684,
+      "protect": 0.0035707358813293695,
+      "kappa_cov": 23964.09741427163
+    },
+    "model.decoder.layers.5.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 519.0585156403804,
+      "protect": 0.024733748493893277,
+      "kappa_cov": 755.884564463916
+    },
+    "model.decoder.layers.5.fc1": {
+      "q": 768,
+      "rho_eff": 588.7077280483504,
+      "protect": 0.018616495895263752,
+      "kappa_cov": 1245.7108509250995
+    },
+    "model.decoder.layers.5.fc2": {
+      "q": 768,
+      "rho_eff": 669.6628962489208,
+      "protect": 0.05787514808471137,
+      "kappa_cov": 7185.747621368517
+    },
+    "model.decoder.layers.6.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 333.0866387528785,
+      "protect": 0.0030321063425171016,
+      "kappa_cov": 13479.972710361933
+    },
+    "model.decoder.layers.6.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 489.3828568499798,
+      "protect": 0.01761021792544798,
+      "kappa_cov": 13479.972710361933
+    },
+    "model.decoder.layers.6.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 354.465793901913,
+      "protect": 0.0036879052254626646,
+      "kappa_cov": 13479.972710361933
+    },
+    "model.decoder.layers.6.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 496.81294950885075,
+      "protect": 0.025735762785089253,
+      "kappa_cov": 650.3324087528823
+    },
+    "model.decoder.layers.6.fc1": {
+      "q": 768,
+      "rho_eff": 590.6627034893428,
+      "protect": 0.018921734258800647,
+      "kappa_cov": 1869.745277850181
+    },
+    "model.decoder.layers.6.fc2": {
+      "q": 768,
+      "rho_eff": 668.5221936316274,
+      "protect": 0.05731271334598011,
+      "kappa_cov": 7445.656489809739
+    },
+    "model.decoder.layers.7.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 352.6885240228955,
+      "protect": 0.0044320945507960565,
+      "kappa_cov": 6092.730166445396
+    },
+    "model.decoder.layers.7.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 466.82060936637004,
+      "protect": 0.020372609876406166,
+      "kappa_cov": 6092.730166445396
+    },
+    "model.decoder.layers.7.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 367.23020209461686,
+      "protect": 0.005970879605458697,
+      "kappa_cov": 6092.730166445396
+    },
+    "model.decoder.layers.7.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 477.2107083033243,
+      "protect": 0.02444898408473987,
+      "kappa_cov": 1311.8885464213904
+    },
+    "model.decoder.layers.7.fc1": {
+      "q": 768,
+      "rho_eff": 586.1252270592178,
+      "protect": 0.016592353111517962,
+      "kappa_cov": 2352.0419363676406
+    },
+    "model.decoder.layers.7.fc2": {
+      "q": 768,
+      "rho_eff": 671.1192084297061,
+      "protect": 0.052379243787856924,
+      "kappa_cov": 5749.401767348792
+    },
+    "model.decoder.layers.8.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 354.85876450408256,
+      "protect": 0.004449000241528497,
+      "kappa_cov": 2347.4105793967638
+    },
+    "model.decoder.layers.8.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 505.1428712844294,
+      "protect": 0.02390160456568451,
+      "kappa_cov": 2347.4105793967638
+    },
+    "model.decoder.layers.8.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 362.0272389424811,
+      "protect": 0.007881394432734357,
+      "kappa_cov": 2347.4105793967638
+    },
+    "model.decoder.layers.8.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 475.83235092599506,
+      "protect": 0.02095055180680631,
+      "kappa_cov": 603.2280021515903
+    },
+    "model.decoder.layers.8.fc1": {
+      "q": 768,
+      "rho_eff": 581.2654775051634,
+      "protect": 0.01475570365341639,
+      "kappa_cov": 1572.0202481001008
+    },
+    "model.decoder.layers.8.fc2": {
+      "q": 768,
+      "rho_eff": 668.5391994641076,
+      "protect": 0.043371258464743455,
+      "kappa_cov": 6618.88935446972
+    },
+    "model.decoder.layers.9.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 351.2796481023339,
+      "protect": 0.00545879264786206,
+      "kappa_cov": 1213.0505010723869
+    },
+    "model.decoder.layers.9.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 518.6881722068855,
+      "protect": 0.02201486059584603,
+      "kappa_cov": 1213.0505010723869
+    },
+    "model.decoder.layers.9.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 377.2602540089985,
+      "protect": 0.012138791478645501,
+      "kappa_cov": 1213.0505010723869
+    },
+    "model.decoder.layers.9.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 475.189440669082,
+      "protect": 0.008077728474153138,
+      "kappa_cov": 1703.4053692762382
+    },
+    "model.decoder.layers.9.fc1": {
+      "q": 768,
+      "rho_eff": 567.9427785874548,
+      "protect": 0.014719357634524345,
+      "kappa_cov": 1263.2685656761332
+    },
+    "model.decoder.layers.9.fc2": {
+      "q": 768,
+      "rho_eff": 662.3970875869685,
+      "protect": 0.029786336470830937,
+      "kappa_cov": 6137.182939565169
+    },
+    "model.decoder.layers.10.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 372.7398757234511,
+      "protect": 0.005618922862643007,
+      "kappa_cov": 978.6877407096048
+    },
+    "model.decoder.layers.10.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 531.4489996084451,
+      "protect": 0.026046328624642952,
+      "kappa_cov": 978.6877407096048
+    },
+    "model.decoder.layers.10.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 399.02363208948447,
+      "protect": 0.0077373071035528665,
+      "kappa_cov": 978.6877407096048
+    },
+    "model.decoder.layers.10.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 488.42439215939,
+      "protect": 0.019341694397205168,
+      "kappa_cov": 969.8325627002713
+    },
+    "model.decoder.layers.10.fc1": {
+      "q": 768,
+      "rho_eff": 553.6240107869652,
+      "protect": 0.01408532169253184,
+      "kappa_cov": 1246.4008907659447
+    },
+    "model.decoder.layers.10.fc2": {
+      "q": 768,
+      "rho_eff": 658.5916834558478,
+      "protect": 0.03719535922339283,
+      "kappa_cov": 7633.839149785284
+    },
+    "model.decoder.layers.11.self_attn.k_proj": {
+      "q": 768,
+      "rho_eff": 368.6555997047061,
+      "protect": 0.008804777039824364,
+      "kappa_cov": 1328.268836425885
+    },
+    "model.decoder.layers.11.self_attn.v_proj": {
+      "q": 768,
+      "rho_eff": 531.1762792371923,
+      "protect": 0.028855199594514113,
+      "kappa_cov": 1328.268836425885
+    },
+    "model.decoder.layers.11.self_attn.q_proj": {
+      "q": 768,
+      "rho_eff": 388.10932443016014,
+      "protect": 0.009017828860148779,
+      "kappa_cov": 1328.268836425885
+    },
+    "model.decoder.layers.11.self_attn.out_proj": {
+      "q": 768,
+      "rho_eff": 437.64762284417844,
+      "protect": 0.005841823288027687,
+      "kappa_cov": 1328.7835911491115
+    },
+    "model.decoder.layers.11.fc1": {
+      "q": 768,
+      "rho_eff": 542.3225910012471,
+      "protect": 0.0100654723932313,
+      "kappa_cov": 5588.376114077962
+    },
+    "model.decoder.layers.11.fc2": {
+      "q": 768,
+      "rho_eff": 281.07975372850586,
+      "protect": 0.0004881740469778705,
+      "kappa_cov": 11200.724884991141
+    }
+  }
+}

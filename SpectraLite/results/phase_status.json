@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T17:11:04Z",
+  "updated_at": "2026-07-12T17:28:15Z",
   "phases": {
     "0": {
       "complete": true,
@@ -102,6 +102,24 @@
         "last_prefill_ms": 10.359569009145101
       },
       "notes": "SpectraLite novelty: Roy–Vetterli ρ_eff + stable-rank protect scores; binary-search λ under Phase-3-matched FLOP keep ratios."
+    },
+    "5": {
+      "complete": true,
+      "completed_at": "2026-07-12T17:28:15Z",
+      "artifacts": {
+        "summary": "results/phase5_summary.json",
+        "details": "results/phase5_stability_details.json",
+        "spectrum": "results/phase5_spectrum_meta.json",
+        "csv": "results/phase5_stability.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "kappa_max": 10000.0,
+        "num_settings": 6,
+        "last_method": "spectralite_lw_k0.45",
+        "last_ppl_c4": 3525.326904296875
+      },
+      "notes": "Ledoit–Wolf covariance + κ truncation gate on ActSVD and SpectraLite; logs recon error / κ bumps vs Phase 3–4."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
