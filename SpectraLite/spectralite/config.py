@@ -44,6 +44,16 @@ class Config:
     trust_remote_code: bool = False
     max_new_tokens: int = 50
     smoke_prompt: str = "Explain Singular Value Decomposition in one sentence."
+    # Phase 1 profiling defaults (paper protocol can raise these).
+    calib_num_sequences: int = 256
+    calib_seq_len: int = 2048
+    ppl_seq_len: int = 512
+    ppl_max_tokens: int = 50_000
+    latency_warmup: int = 10
+    latency_reps_prefill: int = 50
+    latency_reps_decode: int = 30
+    latency_prompt_len: int = 128
+    latency_gen_tokens: int = 64
     results_dir: Path = field(default_factory=lambda: REPO_ROOT / "results")
     checkpoints_dir: Path = field(default_factory=lambda: REPO_ROOT / "checkpoints")
     figures_dir: Path = field(default_factory=lambda: REPO_ROOT / "figures")

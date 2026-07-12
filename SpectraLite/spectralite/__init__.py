@@ -1,7 +1,7 @@
 """SpectraLite: spectral-decay-guided SVD compression for decoder-only LLMs.
 
-Phase 0 exposes environment, loading, and model-analysis utilities only.
-Compression algorithms are intentionally absent.
+Phase 0: environment / load / analysis utilities.
+Phase 1: dense baseline FLOP / latency / perplexity harness.
 """
 
 from __future__ import annotations
@@ -17,4 +17,4 @@ __all__ = [
     "__version__",
 ]
 
-__version__ = "0.1.0-phase0"
+__version__ = "0.2.0-phase1"

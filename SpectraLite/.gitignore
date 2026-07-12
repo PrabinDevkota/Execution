@@ -34,15 +34,19 @@ pip-wheel-metadata/
 Thumbs.db
 desktop.ini
 
-# Experiment artifacts (keep directory placeholders)
+# Experiment artifacts (keep directory placeholders + CSV tables)
 results/*
 !results/.gitkeep
+!results/*.csv
 checkpoints/*
 !checkpoints/.gitkeep
 figures/*
 !figures/.gitkeep
+!figures/*.png
+!figures/*.pdf
 logs/*
 !logs/.gitkeep
+!logs/*.log
 
 # Hugging Face / model caches (never commit)
 .cache/
