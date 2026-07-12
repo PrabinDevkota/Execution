@@ -1,26 +1,20 @@
 # SpectraLite notebooks
 
-## Main lab file
+## Main file: `works.ipynb`
 
-Use **[`works.ipynb`](works.ipynb)** for the whole research project.
+Each **PHASE N RUN** cell is self-contained (git sync → deps → model → run → `results/`).
 
-### Persistence (important)
+You can run **only the phase you need**. Set `FORCE_RERUN_PHASEN = True` inside that cell to remeasure.
 
-After each phase, artifacts are written under `SpectraLite/results/` and should be **committed to git**:
+### Current progress (in `results/phase_status.json`)
 
-| File | Purpose |
-|------|---------|
-| `results/phase_status.json` | Which phases are complete |
-| `results/phase0_summary.json` | Phase 0 env/model summary |
-| `results/phase0_linear_layers.json` | Full `nn.Linear` inventory |
-| `results/phase1_dense_baselines.csv` | Dense FLOP/latency/PPL row(s) |
-| `results/phase1_summary.json` | Phase 1 cached metrics |
+| Phase | Status |
+|-------|--------|
+| 0 | Complete |
+| 1 | Complete (optional FORCE rerun for WT2/PTB PPL) |
+| 2 | Complete — vanilla SVD hurts PPL, no speedup |
+| 3+ | Not implemented |
 
-**New Colab session:** `git pull` → Stage 0 → **Session Restore** → only run incomplete phases.  
-Model weights still reload from Hugging Face (not stored in git). Metrics are **not** recomputed if marked complete.
+### After Colab
 
-Open via: `File → Open notebook → GitHub → works.ipynb` (never Files double-click).
-
-## Legacy
-
-`Colab_Bootstrap.ipynb` / `Phase0_Setup.ipynb` — superseded by `works.ipynb`.
+Download `SpectraLite/results/` to your PC and tell Cursor **uploaded** (Colab push often needs a PAT).
