@@ -34,12 +34,14 @@ pip-wheel-metadata/
 Thumbs.db
 desktop.ini
 
-# Experiment artifacts (keep directory placeholders + CSV tables)
+# Experiment artifacts — KEEP json/csv in git so phases survive new Colab runtimes
 results/*
 !results/.gitkeep
 !results/*.csv
+!results/*.json
 checkpoints/*
 !checkpoints/.gitkeep
+!checkpoints/*.json
 figures/*
 !figures/.gitkeep
 !figures/*.png

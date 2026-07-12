@@ -163,7 +163,7 @@ def run_phase1_dense_baseline(
     print_section("Results written")
     print_kv("CSV", str(csv_path))
 
-    return {
+    out = {
         "row": row,
         "csv_path": str(csv_path),
         "param_stats": param_stats,
@@ -173,3 +173,13 @@ def run_phase1_dense_baseline(
         "decode": decode,
         "ppl": ppl_stats,
     }
+
+    # Persist git-tracked Phase 1 artifacts + phase_status.json
+    try:
+        from spectralite.artifacts import save_phase1_artifacts
+
+        save_phase1_artifacts(out, config=cfg)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Could not write phase1 artifacts: %s", exc)
+
+    return out

@@ -2,26 +2,25 @@
 
 ## Main lab file
 
-Use **[`works.ipynb`](works.ipynb)** for the whole research project (all phases in one notebook).
+Use **[`works.ipynb`](works.ipynb)** for the whole research project.
 
-Open it in Colab via:
+### Persistence (important)
 
-`File → Open notebook → GitHub → SpectraLite/notebooks/works.ipynb`
+After each phase, artifacts are written under `SpectraLite/results/` and should be **committed to git**:
 
-**Never double-click** `.ipynb` files in the left Files panel (opens raw text mode).
+| File | Purpose |
+|------|---------|
+| `results/phase_status.json` | Which phases are complete |
+| `results/phase0_summary.json` | Phase 0 env/model summary |
+| `results/phase0_linear_layers.json` | Full `nn.Linear` inventory |
+| `results/phase1_dense_baselines.csv` | Dense FLOP/latency/PPL row(s) |
+| `results/phase1_summary.json` | Phase 1 cached metrics |
 
-## Workflow
+**New Colab session:** `git pull` → Stage 0 → **Session Restore** → only run incomplete phases.  
+Model weights still reload from Hugging Face (not stored in git). Metrics are **not** recomputed if marked complete.
 
-1. New Colab runtime → GPU (A100)
-2. Open `works.ipynb` from GitHub
-3. Run **Stage 0** (bootstrap) then the phase you need
-4. Save a copy to GitHub
-5. Ask Cursor to implement the next phase section in `works.ipynb`
+Open via: `File → Open notebook → GitHub → works.ipynb` (never Files double-click).
 
-## Legacy notebooks
+## Legacy
 
-| File | Status |
-|------|--------|
-| `works.ipynb` | **Primary** — use this |
-| `Colab_Bootstrap.ipynb` | Legacy (folded into Stage 0 of `works.ipynb`) |
-| `Phase0_Setup.ipynb` | Legacy (folded into Phase 0 of `works.ipynb`) |
+`Colab_Bootstrap.ipynb` / `Phase0_Setup.ipynb` — superseded by `works.ipynb`.
