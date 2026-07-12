@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T18:00:08Z",
+  "updated_at": "2026-07-12T18:10:43Z",
   "phases": {
     "0": {
       "complete": true,
@@ -82,26 +82,27 @@
     },
     "4": {
       "complete": true,
-      "completed_at": "2026-07-12T17:11:04Z",
+      "completed_at": "2026-07-12T18:10:43Z",
       "artifacts": {
         "summary": "results/phase4_summary.json",
         "allocations": "results/phase4_allocations.json",
         "spectrum": "results/phase4_spectrum_meta.json",
-        "csv": "results/phase4_spectralite.csv",
+        "csv": "results/phase4_spectralite_rho.csv",
         "status": "results/phase_status.json"
       },
       "metrics": {
+        "protect_mode": "rho",
         "target_keep_ratios": [
           0.7502439024390244,
           0.6,
           0.4497560975609756
         ],
         "num_settings": 3,
-        "last_method": "spectralite_keep0.45",
-        "last_ppl_c4": 5780.87109375,
-        "last_prefill_ms": 10.359569009145101
+        "last_method": "spectralite_rho_keep0.45",
+        "last_ppl_c4": 2500.9111328125,
+        "last_prefill_ms": 10.602530161539713
       },
-      "notes": "SpectraLite novelty: Roy–Vetterli ρ_eff + stable-rank protect scores; binary-search λ under Phase-3-matched FLOP keep ratios."
+      "notes": "SpectraLite ρ_eff allocation (protect_mode=rho); binary-search λ under Phase-3-matched FLOP keep ratios. Revised after Phase 7 ablations."
     },
     "5": {
       "complete": true,

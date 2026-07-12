@@ -1,5 +1,6 @@
 {
   "ridge": 0.01,
+  "protect_mode": "rho",
   "calib_num_sequences": 32,
   "calib_seq_len": 512,
   "layers": {
@@ -8,7 +9,7 @@
       "rho_eff": 241.9880435509783,
       "compressibility": 0.6849114016263304,
       "stable_rank": 5.264350154050181,
-      "protect": 0.0021598134262863066,
+      "protect_full": 0.31508859837366965,
       "in_features": 768,
       "out_features": 768
     },
@@ -17,7 +18,7 @@
       "rho_eff": 476.47297733187236,
       "compressibility": 0.37959247743245783,
       "stable_rank": 9.840361865645347,
-      "protect": 0.007949263706032743,
+      "protect_full": 0.6204075225675422,
       "in_features": 768,
       "out_features": 768
     },
@@ -26,7 +27,7 @@
       "rho_eff": 282.4924351560699,
       "compressibility": 0.632171308390534,
       "stable_rank": 8.622417793500333,
-      "protect": 0.004129651895173706,
+      "protect_full": 0.367828691609466,
       "in_features": 768,
       "out_features": 768
     },
@@ -35,7 +36,7 @@
       "rho_eff": 481.49572930407254,
       "compressibility": 0.3730524358019889,
       "stable_rank": 3.7284978330006924,
-      "protect": 0.003043714367861129,
+      "protect_full": 0.6269475641980111,
       "in_features": 768,
       "out_features": 768
     },
@@ -44,7 +45,7 @@
       "rho_eff": 487.135768484353,
       "compressibility": 0.3657086347859987,
       "stable_rank": 1.4735351138439308,
-      "protect": 0.001216992967514109,
+      "protect_full": 0.6342913652140013,
       "in_features": 768,
       "out_features": 3072
     },
@@ -53,7 +54,7 @@
       "rho_eff": 590.5151786263585,
       "compressibility": 0.2311000278302623,
       "stable_rank": 1.4652976976792138,
-      "protect": 0.001467014790320219,
+      "protect_full": 0.7688999721697377,
       "in_features": 3072,
       "out_features": 768
     },
@@ -62,7 +63,7 @@
       "rho_eff": 189.62121208909372,
       "compressibility": 0.7530973800923259,
       "stable_rank": 2.9902452288989747,
-      "protect": 0.0009613273192468485,
+      "protect_full": 0.24690261990767412,
       "in_features": 768,
       "out_features": 768
     },
@@ -71,7 +72,7 @@
       "rho_eff": 454.49208896276156,
       "compressibility": 0.4082134258297375,
       "stable_rank": 11.246562772702653,
-      "protect": 0.0086661000708965,
+      "protect_full": 0.5917865741702625,
       "in_features": 768,
       "out_features": 768
     },
@@ -80,7 +81,7 @@
       "rho_eff": 235.52835105423685,
       "compressibility": 0.6933224595647958,
       "stable_rank": 3.1715420383479684,
-      "protect": 0.0012664592600356889,
+      "protect_full": 0.30667754043520423,
       "in_features": 768,
       "out_features": 768
     },
@@ -89,7 +90,7 @@
       "rho_eff": 482.05233315767964,
       "compressibility": 0.372327691200938,
       "stable_rank": 15.84725339329902,
-      "protect": 0.012951669434239277,
+      "protect_full": 0.627672308799062,
       "in_features": 768,
       "out_features": 768
     },
@@ -98,7 +99,7 @@
       "rho_eff": 433.63197666838005,
       "compressibility": 0.4353750303797135,
       "stable_rank": 1.1308334365445922,
-      "protect": 0.0008313760348367117,
+      "protect_full": 0.5646249696202865,
       "in_features": 768,
       "out_features": 3072
     },
@@ -107,7 +108,7 @@
       "rho_eff": 686.7702177843362,
       "compressibility": 0.10576794559331226,
       "stable_rank": 5.1925550735683705,
-      "protect": 0.0060460275925220235,
+      "protect_full": 0.8942320544066877,
       "in_features": 3072,
       "out_features": 768
     },
@@ -116,7 +117,7 @@
       "rho_eff": 267.85671631880183,
       "compressibility": 0.6512282339598934,
       "stable_rank": 1.9779581467226135,
-      "protect": 0.0008982499426899247,
+      "protect_full": 0.34877176604010657,
       "in_features": 768,
       "out_features": 768
     },
@@ -125,7 +126,7 @@
       "rho_eff": 444.0433460960116,
       "compressibility": 0.4218185597708183,
       "stable_rank": 11.500441728828626,
-      "protect": 0.008657997346413952,
+      "protect_full": 0.5781814402291817,
       "in_features": 768,
       "out_features": 768
     },
@@ -134,7 +135,7 @@
       "rho_eff": 287.48207107736624,
       "compressibility": 0.6256743866180128,
       "stable_rank": 2.1326829153150224,
-      "protect": 0.001039476354719506,
+      "protect_full": 0.3743256133819873,
       "in_features": 768,
       "out_features": 768
     },
@@ -143,7 +144,7 @@
       "rho_eff": 542.185309842942,
       "compressibility": 0.2940295444753359,
       "stable_rank": 26.889926025642815,
-      "protect": 0.024718090267379658,
+      "protect_full": 0.7059704555246641,
       "in_features": 768,
       "out_features": 768
     },
@@ -152,7 +153,7 @@
       "rho_eff": 411.958153540516,
       "compressibility": 0.4635961542441198,
       "stable_rank": 1.1194838453213194,
-      "protect": 0.0007818951040259591,
+      "protect_full": 0.5364038457558802,
       "in_features": 768,
       "out_features": 3072
     },
@@ -161,7 +162,7 @@
       "rho_eff": 619.3421270247378,
       "compressibility": 0.19356493876987269,
       "stable_rank": 1.5534578238452772,
-      "protect": 0.001631201634493602,
+      "protect_full": 0.8064350612301273,
       "in_features": 3072,
       "out_features": 768
     },
@@ -170,7 +171,7 @@
       "rho_eff": 238.58534083205035,
       "compressibility": 0.6893420041249345,
       "stable_rank": 1.5714383521377728,
-      "protect": 0.0006356508972868958,
+      "protect_full": 0.31065799587506554,
       "in_features": 768,
       "out_features": 768
     },
@@ -179,7 +180,7 @@
       "rho_eff": 468.31050753463495,
       "compressibility": 0.39022069331427744,
       "stable_rank": 13.165445841703567,
-      "protect": 0.010453146403076081,
+      "protect_full": 0.6097793066857226,
       "in_features": 768,
       "out_features": 768
     },
@@ -188,7 +189,7 @@
       "rho_eff": 265.26813378457257,
       "compressibility": 0.6545987841346712,
       "stable_rank": 1.7916050506702637,
-      "protect": 0.0008057585453801734,
+      "protect_full": 0.34540121586532885,
       "in_features": 768,
       "out_features": 768
     },
@@ -197,7 +198,7 @@
       "rho_eff": 565.8564818003853,
       "compressibility": 0.2632077059890817,
       "stable_rank": 35.89100468892424,
-      "protect": 0.03443257249883999,
+      "protect_full": 0.7367922940109183,
       "in_features": 768,
       "out_features": 768
     },
@@ -206,7 +207,7 @@
       "rho_eff": 410.63900658640256,
       "compressibility": 0.4653137935072883,
       "stable_rank": 1.113818160288483,
-      "protect": 0.0007754468839158074,
+      "protect_full": 0.5346862064927117,
       "in_features": 768,
       "out_features": 3072
     },
@@ -215,7 +216,7 @@
       "rho_eff": 679.6620847977252,
       "compressibility": 0.11502332708629526,
       "stable_rank": 8.856657431406349,
-      "protect": 0.010205644826539621,
+      "protect_full": 0.8849766729137047,
       "in_features": 3072,
       "out_features": 768
     },
@@ -224,7 +225,7 @@
       "rho_eff": 276.2072226396449,
       "compressibility": 0.6403551788546291,
       "stable_rank": 1.6860660273484447,
-      "protect": 0.0007895636912044499,
+      "protect_full": 0.35964482114537094,
       "in_features": 768,
       "out_features": 768
     },
@@ -233,7 +234,7 @@
       "rho_eff": 472.64970931854344,
       "compressibility": 0.3845706909914799,
       "stable_rank": 11.41050376359609,
-      "protect": 0.009143695894100337,
+      "protect_full": 0.6154293090085201,
       "in_features": 768,
       "out_features": 768
     },
@@ -242,7 +243,7 @@
       "rho_eff": 302.94994316623536,
       "compressibility": 0.6055339281689645,
       "stable_rank": 1.931695525791075,
-      "protect": 0.0009921723255630107,
+      "protect_full": 0.3944660718310356,
       "in_features": 768,
       "out_features": 768
     },
@@ -251,7 +252,7 @@
       "rho_eff": 580.3950065923215,
       "compressibility": 0.24427733516624806,
       "stable_rank": 28.185666605748725,
-      "protect": 0.027735087340380365,
+      "protect_full": 0.755722664833752,
       "in_features": 768,
       "out_features": 768
     },
@@ -260,7 +261,7 @@
       "rho_eff": 430.18792410103543,
       "compressibility": 0.4398594738267768,
       "stable_rank": 1.1285023763928186,
-      "protect": 0.0008230728058599039,
+      "protect_full": 0.5601405261732232,
       "in_features": 768,
       "out_features": 3072
     },
@@ -269,7 +270,7 @@
       "rho_eff": 696.9148629787863,
       "compressibility": 0.09255877216303865,
       "stable_rank": 13.009089262425398,
-      "protect": 0.015371072829864496,
+      "protect_full": 0.9074412278369614,
       "in_features": 3072,
       "out_features": 768
     },
@@ -278,7 +279,7 @@
       "rho_eff": 267.13208657095447,
       "compressibility": 0.652171762277403,
       "stable_rank": 1.649333452139991,
-      "protect": 0.0007469853490557035,
+      "protect_full": 0.34782823772259697,
       "in_features": 768,
       "out_features": 768
     },
@@ -287,7 +288,7 @@
       "rho_eff": 498.25266898954555,
       "compressibility": 0.3512335039198625,
       "stable_rank": 12.27611967203946,
-      "protect": 0.010370228053501938,
+      "protect_full": 0.6487664960801375,
       "in_features": 768,
       "out_features": 768
     },
@@ -296,7 +297,7 @@
       "rho_eff": 303.9549659662078,
       "compressibility": 0.6042253047315003,
       "stable_rank": 2.036591731138304,
-      "protect": 0.0010495201455437613,
+      "protect_full": 0.39577469526849973,
       "in_features": 768,
       "out_features": 768
     },
@@ -305,7 +306,7 @@
       "rho_eff": 580.6822412351187,
       "compressibility": 0.24390333172510592,
       "stable_rank": 42.08607267858425,
-      "protect": 0.04143377517324558,
+      "protect_full": 0.7560966682748941,
       "in_features": 768,
       "out_features": 768
     },
@@ -314,7 +315,7 @@
       "rho_eff": 470.01226787373906,
       "compressibility": 0.3880048595394022,
       "stable_rank": 1.1954868149942535,
-      "protect": 0.0009526459912255219,
+      "protect_full": 0.6119951404605978,
       "in_features": 768,
       "out_features": 3072
     },
@@ -323,7 +324,7 @@
       "rho_eff": 701.0885893855753,
       "compressibility": 0.08712423257086543,
       "stable_rank": 93.46206411144125,
-      "protect": 0.11109277799641004,
+      "protect_full": 0.9128757674291346,
       "in_features": 3072,
       "out_features": 768
     },
@@ -332,7 +333,7 @@
       "rho_eff": 281.9561423472862,
       "compressibility": 0.6328696063186379,
       "stable_rank": 1.7261933763042985,
-      "protect": 0.0008251797575686939,
+      "protect_full": 0.3671303936813622,
       "in_features": 768,
       "out_features": 768
     },
@@ -341,7 +342,7 @@
       "rho_eff": 492.3643177991433,
       "compressibility": 0.3589006278656989,
       "stable_rank": 12.496799521476587,
-      "protect": 0.010431888446493327,
+      "protect_full": 0.6410993721343011,
       "in_features": 768,
       "out_features": 768
     },
@@ -350,7 +351,7 @@
       "rho_eff": 314.37948560885764,
       "compressibility": 0.5906517114468,
       "stable_rank": 1.981770062778772,
-      "protect": 0.0010562945097714299,
+      "protect_full": 0.40934828855320005,
       "in_features": 768,
       "out_features": 768
     },
@@ -359,7 +360,7 @@
       "rho_eff": 569.8704290399761,
       "compressibility": 0.2579812121875311,
       "stable_rank": 28.86570629369251,
-      "protect": 0.02788918801223499,
+      "protect_full": 0.7420187878124689,
       "in_features": 768,
       "out_features": 768
     },
@@ -368,7 +369,7 @@
       "rho_eff": 488.64784861967155,
       "compressibility": 0.36373978044313604,
       "stable_rank": 1.2460600306666856,
-      "protect": 0.0010323156623607006,
+      "protect_full": 0.636260219556864,
       "in_features": 768,
       "out_features": 3072
     },
@@ -377,7 +378,7 @@
       "rho_eff": 696.1597366717416,
       "compressibility": 0.09354200954200309,
       "stable_rank": 70.36800817690144,
-      "protect": 0.0830542230267786,
+      "protect_full": 0.9064579904579969,
       "in_features": 3072,
       "out_features": 768
     },
@@ -386,7 +387,7 @@
       "rho_eff": 307.60182157589605,
       "compressibility": 0.5994767948230519,
       "stable_rank": 1.8649151870873657,
-      "protect": 0.0009725804793169263,
+      "protect_full": 0.400523205176948,
       "in_features": 768,
       "out_features": 768
     },
@@ -395,7 +396,7 @@
       "rho_eff": 464.4283023934842,
       "compressibility": 0.3952756479251508,
       "stable_rank": 8.754837692892872,
-      "protect": 0.006893572332493633,
+      "protect_full": 0.6047243520748492,
       "in_features": 768,
       "out_features": 768
     },
@@ -404,7 +405,7 @@
       "rho_eff": 334.1879617677127,
       "compressibility": 0.5648594247816241,
       "stable_rank": 2.250787588546758,
-      "protect": 0.0012752721431961162,
+      "protect_full": 0.4351405752183759,
       "in_features": 768,
       "out_features": 768
     },
@@ -413,7 +414,7 @@
       "rho_eff": 535.5164844922521,
       "compressibility": 0.30271291081738017,
       "stable_rank": 26.96538154221117,
-      "protect": 0.024482568234722876,
+      "protect_full": 0.6972870891826198,
       "in_features": 768,
       "out_features": 768
     },
@@ -422,7 +423,7 @@
       "rho_eff": 480.422039675773,
       "compressibility": 0.3744504691721705,
       "stable_rank": 1.248267755655242,
-      "protect": 0.0010167360792938077,
+      "protect_full": 0.6255495308278295,
       "in_features": 768,
       "out_features": 3072
     },
@@ -431,7 +432,7 @@
       "rho_eff": 704.1320235344543,
       "compressibility": 0.08316142768951262,
       "stable_rank": 95.65836392253232,
-      "protect": 0.11419697631287964,
+      "protect_full": 0.9168385723104874,
       "in_features": 3072,
       "out_features": 768
     },
@@ -440,7 +441,7 @@
       "rho_eff": 305.94590548308855,
       "compressibility": 0.6016329355688952,
       "stable_rank": 1.826855817895388,
-      "protect": 0.0009476031110857694,
+      "protect_full": 0.39836706443110487,
       "in_features": 768,
       "out_features": 768
     },
@@ -449,7 +450,7 @@
       "rho_eff": 503.8149513517095,
       "compressibility": 0.34399094876079495,
       "stable_rank": 12.153391235176224,
-      "protect": 0.010381164913446388,
+      "protect_full": 0.656009051239205,
       "in_features": 768,
       "out_features": 768
     },
@@ -458,7 +459,7 @@
       "rho_eff": 331.80453580847416,
       "compressibility": 0.5679628439993827,
       "stable_rank": 2.462928269273012,
-      "protect": 0.0013855163084508266,
+      "protect_full": 0.4320371560006174,
       "in_features": 768,
       "out_features": 768
     },
@@ -467,7 +468,7 @@
       "rho_eff": 544.2069368585774,
       "compressibility": 0.2913972176320607,
       "stable_rank": 19.796761903339032,
-      "protect": 0.01826567782106987,
+      "protect_full": 0.7086027823679393,
       "in_features": 768,
       "out_features": 768
     },
@@ -476,7 +477,7 @@
       "rho_eff": 469.3636760394628,
       "compressibility": 0.3888493801569495,
       "stable_rank": 1.2504494055302815,
-      "protect": 0.0009950689183231844,
+      "protect_full": 0.6111506198430505,
       "in_features": 768,
       "out_features": 3072
     },
@@ -485,7 +486,7 @@
       "rho_eff": 705.1256548658874,
       "compressibility": 0.08186763689337573,
       "stable_rank": 101.61184961006083,
-      "protect": 0.12147542656526052,
+      "protect_full": 0.9181323631066243,
       "in_features": 3072,
       "out_features": 768
     },
@@ -494,7 +495,7 @@
       "rho_eff": 311.80855761441376,
       "compressibility": 0.5939992739395654,
       "stable_rank": 2.1447951779561487,
-      "protect": 0.0011338390618504106,
+      "protect_full": 0.4060007260604346,
       "in_features": 768,
       "out_features": 768
     },
@@ -503,7 +504,7 @@
       "rho_eff": 516.1098133433011,
       "compressibility": 0.3279820138759101,
       "stable_rank": 12.716738067617165,
-      "protect": 0.011127443627952654,
+      "protect_full": 0.6720179861240899,
       "in_features": 768,
       "out_features": 768
     },
@@ -512,7 +513,7 @@
       "rho_eff": 352.6576629142947,
       "compressibility": 0.5408103347470121,
       "stable_rank": 2.988193026952653,
-      "protect": 0.0017866502028095067,
+      "protect_full": 0.4591896652529879,
       "in_features": 768,
       "out_features": 768
     },
@@ -521,7 +522,7 @@
       "rho_eff": 555.1669224278338,
       "compressibility": 0.277126403088758,
       "stable_rank": 8.350392074635508,
-      "protect": 0.007859736920066274,
+      "protect_full": 0.722873596911242,
       "in_features": 768,
       "out_features": 768
     },
@@ -530,7 +531,7 @@
       "rho_eff": 459.1677211206397,
       "compressibility": 0.402125363124167,
       "stable_rank": 1.2758807076350083,
-      "protect": 0.0009932509306955226,
+      "protect_full": 0.597874636875833,
       "in_features": 768,
       "out_features": 3072
     },
@@ -539,7 +540,7 @@
       "rho_eff": 706.4168212619107,
       "compressibility": 0.08018643064855369,
       "stable_rank": 80.38994891063821,
-      "protect": 0.09628094511389915,
+      "protect_full": 0.9198135693514463,
       "in_features": 3072,
       "out_features": 768
     },
@@ -548,7 +549,7 @@
       "rho_eff": 328.36499201071763,
       "compressibility": 0.5724414166527114,
       "stable_rank": 2.035674745663056,
-      "protect": 0.0011332945448067034,
+      "protect_full": 0.4275585833472886,
       "in_features": 768,
       "out_features": 768
     },
@@ -557,7 +558,7 @@
       "rho_eff": 528.7835784737563,
       "compressibility": 0.31147971552896314,
       "stable_rank": 12.379822873614758,
-      "protect": 0.011098644748232139,
+      "protect_full": 0.6885202844710369,
       "in_features": 768,
       "out_features": 768
     },
@@ -566,7 +567,7 @@
       "rho_eff": 362.36604923733717,
       "compressibility": 0.5281692067222172,
       "stable_rank": 2.3327347263909477,
-      "protect": 0.0014331459328901985,
+      "protect_full": 0.47183079327778277,
       "in_features": 768,
       "out_features": 768
     },
@@ -575,7 +576,7 @@
       "rho_eff": 568.9102817561082,
       "compressibility": 0.2592314039634007,
       "stable_rank": 13.687935690738497,
-      "protect": 0.013202594927431791,
+      "protect_full": 0.7407685960365993,
       "in_features": 768,
       "out_features": 768
     },
@@ -584,7 +585,7 @@
       "rho_eff": 452.14478210894714,
       "compressibility": 0.4112698149623084,
       "stable_rank": 1.3189423924936523,
-      "protect": 0.0010110692692537025,
+      "protect_full": 0.5887301850376916,
       "in_features": 768,
       "out_features": 3072
     },
@@ -593,7 +594,7 @@
       "rho_eff": 706.9408156009175,
       "compressibility": 0.07950414635297198,
       "stable_rank": 62.28428905119712,
-      "protect": 0.0746516013267968,
+      "protect_full": 0.920495853647028,
       "in_features": 3072,
       "out_features": 768
     },
@@ -602,7 +603,7 @@
       "rho_eff": 338.8805308697177,
       "compressibility": 0.5587493087633884,
       "stable_rank": 2.6572989214626372,
-      "protect": 0.0015267382629136604,
+      "protect_full": 0.4412506912366116,
       "in_features": 768,
       "out_features": 768
     },
@@ -611,7 +612,7 @@
       "rho_eff": 527.3977827540377,
       "compressibility": 0.31328413703901337,
       "stable_rank": 11.103215591352429,
-      "protect": 0.009928065464137324,
+      "protect_full": 0.6867158629609866,
       "in_features": 768,
       "out_features": 768
     },
@@ -620,7 +621,7 @@
       "rho_eff": 365.78052295043074,
       "compressibility": 0.5237232774082934,
       "stable_rank": 3.337107996338425,
-      "protect": 0.0020695141398836487,
+      "protect_full": 0.47627672259170667,
       "in_features": 768,
       "out_features": 768
     },
@@ -629,7 +630,7 @@
       "rho_eff": 554.4608010861283,
       "compressibility": 0.2780458319191038,
       "stable_rank": 5.828053567959268,
-      "protect": 0.005478629642170485,
+      "protect_full": 0.7219541680808962,
       "in_features": 768,
       "out_features": 768
     },
@@ -638,7 +639,7 @@
       "rho_eff": 443.48024443593704,
       "compressibility": 0.4225517650573737,
       "stable_rank": 1.296440151643448,
-      "protect": 0.0009747748402021613,
+      "protect_full": 0.5774482349426263,
       "in_features": 768,
       "out_features": 3072
     },
@@ -647,7 +648,7 @@
       "rho_eff": 500.6697151723775,
       "compressibility": 0.3480863083693001,
       "stable_rank": 1.112613992035408,
-      "protect": 0.0009444378839944959,
+      "protect_full": 0.6519136916306999,
       "in_features": 3072,
       "out_features": 768
     }
