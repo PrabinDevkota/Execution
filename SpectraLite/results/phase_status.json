@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T17:28:15Z",
+  "updated_at": "2026-07-12T17:45:17Z",
   "phases": {
     "0": {
       "complete": true,
@@ -120,6 +120,25 @@
         "last_ppl_c4": 3525.326904296875
       },
       "notes": "Ledoit–Wolf covariance + κ truncation gate on ActSVD and SpectraLite; logs recon error / κ bumps vs Phase 3–4."
+    },
+    "6": {
+      "complete": true,
+      "completed_at": "2026-07-12T17:45:17Z",
+      "artifacts": {
+        "summary": "results/phase6_summary.json",
+        "gate_logs": "results/phase6_gate_logs.json",
+        "csv": "results/phase6_latency_gate.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "kappa_speed": 1.0,
+        "num_settings": 7,
+        "dense_prefill_ms": 7.400652821858724,
+        "dense_decode_ms": 7.425743198394775,
+        "cuda_graph_ok": true,
+        "best_decode_speedup": 0.8925084869307089
+      },
+      "notes": "Latency feasibility gate on ridge ActSVD; fused LowRankLinear; optional CUDA-graph prefill probe."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
