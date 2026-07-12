@@ -59,6 +59,7 @@ def sync_repo_and_imports(
     print_section("Repo synced")
     print(f"  PACKAGE_ROOT = {pkg}")
     print(f"  phase2.py exists = {(pkg / 'spectralite' / 'phase2.py').is_file()}")
+    print(f"  phase3.py exists = {(pkg / 'spectralite' / 'phase3.py').is_file()}")
     return pkg
 
 

@@ -45,8 +45,10 @@ class Config:
     max_new_tokens: int = 50
     smoke_prompt: str = "Explain Singular Value Decomposition in one sentence."
     # Phase 1 profiling defaults (paper protocol can raise these).
-    calib_num_sequences: int = 256
-    calib_seq_len: int = 2048
+    calib_num_sequences: int = 32
+    calib_seq_len: int = 512
+    calib_batch_size: int = 2
+    whitening_ridge: float = 1e-2
     ppl_seq_len: int = 512
     ppl_max_tokens: int = 50_000
     latency_warmup: int = 10
