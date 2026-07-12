@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T17:45:17Z",
+  "updated_at": "2026-07-12T18:00:08Z",
   "phases": {
     "0": {
       "complete": true,
@@ -139,6 +139,24 @@
         "best_decode_speedup": 0.8925084869307089
       },
       "notes": "Latency feasibility gate on ridge ActSVD; fused LowRankLinear; optional CUDA-graph prefill probe."
+    },
+    "7": {
+      "complete": true,
+      "completed_at": "2026-07-12T18:00:08Z",
+      "artifacts": {
+        "summary": "results/phase7_summary.json",
+        "claim_table": "results/phase7_claim_table.json",
+        "csv": "results/phase7_ablations.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "num_ablations": 10,
+        "keep_ratio": 0.75,
+        "rank_ratio": 0.5,
+        "best_c4_id": "actsvd_attn_r0.50",
+        "best_c4": 31.000944137573242
+      },
+      "notes": "Phase 7 ablations: whitening, gate, LW, attn/MLP, SpectraLite protect modes, calib size."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
