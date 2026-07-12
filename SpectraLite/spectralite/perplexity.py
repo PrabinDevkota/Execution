@@ -19,14 +19,17 @@ def _load_text_corpus(name: str, *, streaming_c4: bool = True) -> str:
 
     name = name.lower()
     if name in {"wikitext2", "wikitext-2", "wt2"}:
-        ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test")
+        # Namespaced id required by newer huggingface_hub URI parsers.
+        ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="test")
         return "\n\n".join(t for t in ds["text"] if t and t.strip())
     if name in {"ptb", "penn"}:
         try:
-            ds = load_dataset("ptb_text_only", split="test")
+            ds = load_dataset("ptb/ptb_text_only", split="test")
         except Exception:
-            # Fallback mirror used by some HF mirrors / older caches
-            ds = load_dataset("penn_treebank", split="test")
+            try:
+                ds = load_dataset("ptb_text_only", split="test")
+            except Exception:
+                ds = load_dataset("penn_treebank", split="test")
         key = "sentence" if "sentence" in ds.column_names else ds.column_names[0]
         return "\n".join(t for t in ds[key] if t and str(t).strip())
     if name in {"c4"}:

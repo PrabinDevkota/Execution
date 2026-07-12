@@ -44,7 +44,8 @@ def load_wikitext2_calibration_batches(
     """
     from datasets import load_dataset
 
-    ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+    # Namespaced id required by newer huggingface_hub URI parsers.
+    ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="train")
     text = "\n\n".join(t for t in ds["text"] if t and str(t).strip())
     enc = tokenizer(text, return_tensors="pt")
     ids = enc["input_ids"][0]
