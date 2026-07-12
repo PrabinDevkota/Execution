@@ -26,7 +26,9 @@ def _activation_aware_factors(
     weight: torch.Tensor,
     cov_in: torch.Tensor,
     rank: int,
-) -> tuple[torch.Tensor, torch.Tensor]:
+    *,
+    kappa_max: Optional[float] = None,
+) -> tuple[torch.Tensor, torch.Tensor, dict[str, Any]]:
     """Whitened truncated SVD → fused factors ``(U_hat[out,r], V_hat[r,in])``.
 
     Follows SVD-LLM / ASVD:
@@ -36,11 +38,21 @@ def _activation_aware_factors(
     Runs in float64 on CPU so weight (often CUDA) and covariance (CPU) match,
     then the caller casts factors back onto the layer device.
     """
+    from spectralite.stability import (
+        condition_number_from_cov,
+        gate_rank_by_kappa,
+        reconstruction_relative_error,
+    )
+
     w = weight.detach().double().cpu()  # (out, in)
     L = cholesky_factor(cov_in.detach().double().cpu())  # (in, in)
     w_tilde = w @ L
     u, s, vh = torch.linalg.svd(w_tilde, full_matrices=False)
     rank = int(min(rank, u.shape[1], vh.shape[0]))
+    kappa_before = float("nan")
+    bumped = False
+    if kappa_max is not None:
+        rank, kappa_before, bumped = gate_rank_by_kappa(s, rank, kappa_max=float(kappa_max))
     u_r = u[:, :rank]
     s_r = s[:rank]
     vh_r = vh[:rank, :]
@@ -49,7 +61,14 @@ def _activation_aware_factors(
     z = torch.linalg.solve_triangular(L.T, vh_r.T, upper=True)
     v_hat = z.T.contiguous()
     u_hat = (u_r * s_r.unsqueeze(0)).contiguous()
-    return u_hat, v_hat
+    stats = {
+        "rank": rank,
+        "kappa_cov": condition_number_from_cov(cov_in),
+        "kappa_trunc": float(kappa_before) if kappa_max is not None else float("nan"),
+        "kappa_bumped": bumped,
+        "recon_rel_error": reconstruction_relative_error(w, u_hat, v_hat),
+    }
+    return u_hat, v_hat, stats
 
 
 def lowrank_from_factors(
@@ -83,6 +102,8 @@ def apply_activation_aware_svd(
     rank_ratio: float,
     *,
     ridge: float = 1e-2,
+    cov_method: str = "ridge",
+    kappa_max: Optional[float] = None,
     suffixes: Sequence[str] = DEFAULT_COMPRESS_SUFFIXES,
     clone: bool = True,
 ) -> dict[str, Any]:
@@ -121,8 +142,11 @@ def apply_activation_aware_svd(
 
         m, n = int(linear.out_features), int(linear.in_features)
         rank = choose_rank(n, m, rank_ratio)
-        cov = estimate_input_covariance(acts, ridge=ridge)
-        u_hat, v_hat = _activation_aware_factors(linear.weight, cov, rank)
+        cov = estimate_input_covariance(acts, ridge=ridge, method=cov_method)
+        u_hat, v_hat, stab = _activation_aware_factors(
+            linear.weight, cov, rank, kappa_max=kappa_max
+        )
+        rank = int(stab["rank"])
         lr = lowrank_from_factors(linear, u_hat, v_hat)
         set_module_by_name(target, name, lr)
 
@@ -139,6 +163,12 @@ def apply_activation_aware_svd(
                 "rank": rank,
                 "rank_ratio": rank_ratio,
                 "ridge": ridge,
+                "cov_method": cov_method,
+                "kappa_max": kappa_max,
+                "kappa_cov": stab["kappa_cov"],
+                "kappa_trunc": stab["kappa_trunc"],
+                "kappa_bumped": stab["kappa_bumped"],
+                "recon_rel_error": stab["recon_rel_error"],
                 "flop_break_even": be,
                 "below_break_even": rank < be,
                 "dense_params": dense_n,
@@ -148,7 +178,7 @@ def apply_activation_aware_svd(
             }
         )
         logger.info(
-            "ActSVD %s: (%d×%d)→r=%d | acts=%d | params %d→%d",
+            "ActSVD %s: (%d×%d)→r=%d | acts=%d | params %d→%d | kappa_cov=%.3g recon=%.3g",
             name,
             m,
             n,
@@ -156,12 +186,16 @@ def apply_activation_aware_svd(
             acts.shape[0],
             dense_n,
             lr_n,
+            stab["kappa_cov"],
+            stab["recon_rel_error"],
         )
 
     summary = {
         "method": "activation_aware_svd",
         "rank_ratio": rank_ratio,
         "ridge": ridge,
+        "cov_method": cov_method,
+        "kappa_max": kappa_max,
         "num_replaced": len(replacements),
         "num_skipped": len(skipped),
         "skipped": skipped,
@@ -170,6 +204,10 @@ def apply_activation_aware_svd(
         "params_saved_touched": dense_params - lowrank_params,
         "param_keep_ratio_touched": lowrank_params / max(dense_params, 1),
         "replacements": replacements,
+        "mean_recon_rel_error": (
+            sum(r["recon_rel_error"] for r in replacements) / max(len(replacements), 1)
+        ),
+        "num_kappa_bumped": sum(1 for r in replacements if r.get("kappa_bumped")),
     }
     return {"model": target, "summary": summary}
 

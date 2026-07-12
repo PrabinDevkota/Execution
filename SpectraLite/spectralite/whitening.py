@@ -81,13 +81,36 @@ def estimate_input_covariance(
     activations: torch.Tensor,
     *,
     ridge: float = 1e-2,
+    method: str = "ridge",
+    max_samples: int = 8192,
+    seed: int = 42,
 ) -> torch.Tensor:
-    """Uncentered second-moment covariance ``C = XᵀX/n + ridge·I`` (ASVD-style).
+    """Estimate input covariance for whitening.
 
     Args:
         activations: ``[N, in_features]``.
-        ridge: Diagonal jitter for Cholesky stability (Phase 5 upgrades to Ledoit–Wolf).
+        ridge: Diagonal jitter for ``method="ridge"`` (ASVD-style Phase 3).
+        method: ``"ridge"`` or ``"ledoit_wolf"`` (Phase 5).
+        max_samples: Subsample cap for Ledoit–Wolf.
+        seed: Subsample RNG seed.
     """
+    if method in {"ledoit_wolf", "lw", "ledoit-wolf"}:
+        from spectralite.stability import estimate_covariance_ledoit_wolf
+
+        cov, meta = estimate_covariance_ledoit_wolf(
+            activations,
+            max_samples=max_samples,
+            seed=seed,
+        )
+        logger.info(
+            "Ledoit–Wolf cov: dim=%s n=%s shrinkage=%s kappa=%.3g",
+            meta.get("dim"),
+            meta.get("n_samples_used"),
+            meta.get("shrinkage"),
+            meta.get("kappa_cov"),
+        )
+        return cov
+
     if activations.ndim != 2:
         raise ValueError("activations must be 2D [N, in_features]")
     n, d = activations.shape

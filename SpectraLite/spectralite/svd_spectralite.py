@@ -28,12 +28,15 @@ def build_whitened_svd_cache(
     activations: dict[str, torch.Tensor],
     *,
     ridge: float = 1e-2,
+    cov_method: str = "ridge",
     suffixes: Sequence[str] = DEFAULT_COMPRESS_SUFFIXES,
 ) -> dict[str, dict[str, Any]]:
     """Per-layer whitened SVD factors + spectral scores (CPU float64).
 
     Computes once and reuses across multiple FLOP budgets.
     """
+    from spectralite.stability import condition_number_from_cov
+
     cache: dict[str, dict[str, Any]] = {}
     linears = [
         (name, mod)
@@ -56,7 +59,8 @@ def build_whitened_svd_cache(
             continue
 
         m, n = int(linear.out_features), int(linear.in_features)
-        cov = estimate_input_covariance(acts, ridge=ridge)
+        cov = estimate_input_covariance(acts, ridge=ridge, method=cov_method)
+        kappa_cov = condition_number_from_cov(cov)
         L = cholesky_factor(cov.detach().double().cpu())
         w = linear.weight.detach().double().cpu()
         w_tilde = w @ L
@@ -68,22 +72,26 @@ def build_whitened_svd_cache(
             "s": s,
             "vh": vh,
             "L": L,
+            "W": w,
             "in_features": n,
             "out_features": m,
             "bias": None if linear.bias is None else linear.bias.detach().cpu(),
             "dtype": linear.weight.dtype,
             "device": linear.weight.device,
             "has_bias": linear.bias is not None,
+            "cov_method": cov_method,
+            "kappa_cov": kappa_cov,
             **metrics,
         }
         logger.info(
-            "Spectrum %s: q=%d rho_eff=%.2f s=%.3f stable_rank=%.2f protect=%.4f",
+            "Spectrum %s: q=%d rho_eff=%.2f s=%.3f stable_rank=%.2f protect=%.4f kappa_cov=%.3g",
             name,
             metrics["q"],
             metrics["rho_eff"],
             metrics["compressibility"],
             metrics["stable_rank"],
             metrics["protect"],
+            kappa_cov,
         )
     return cache
 
@@ -107,20 +115,47 @@ def cache_to_alloc_metas(cache: dict[str, dict[str, Any]]) -> list[LayerAllocMet
     return metas
 
 
-def _factors_from_cache(entry: dict[str, Any], rank: int) -> tuple[torch.Tensor, torch.Tensor]:
+def _factors_from_cache(
+    entry: dict[str, Any],
+    rank: int,
+    *,
+    kappa_max: Optional[float] = None,
+) -> tuple[torch.Tensor, torch.Tensor, dict[str, Any]]:
     """Truncate whitened SVD and fuse ``Ŵ = UΣVᵀ L⁻¹`` into ``(U_hat, V_hat)``."""
+    from spectralite.stability import (
+        gate_rank_by_kappa,
+        reconstruction_relative_error,
+    )
+
     u = entry["u"]
     s = entry["s"]
     vh = entry["vh"]
     L = entry["L"]
     rank = int(min(rank, u.shape[1], vh.shape[0], s.numel()))
+    kappa_trunc = float("nan")
+    bumped = False
+    if kappa_max is not None:
+        rank, kappa_trunc, bumped = gate_rank_by_kappa(s, rank, kappa_max=float(kappa_max))
     u_r = u[:, :rank]
     s_r = s[:rank]
     vh_r = vh[:rank, :]
     z = torch.linalg.solve_triangular(L.T, vh_r.T, upper=True)
     v_hat = z.T.contiguous()
     u_hat = (u_r * s_r.unsqueeze(0)).contiguous()
-    return u_hat, v_hat
+    w = entry.get("W")
+    recon = (
+        reconstruction_relative_error(w, u_hat, v_hat)
+        if w is not None
+        else float("nan")
+    )
+    stats = {
+        "rank": rank,
+        "kappa_cov": float(entry.get("kappa_cov", float("nan"))),
+        "kappa_trunc": kappa_trunc,
+        "kappa_bumped": bumped,
+        "recon_rel_error": recon,
+    }
+    return u_hat, v_hat, stats
 
 
 def apply_spectralite_ranks(
@@ -129,6 +164,7 @@ def apply_spectralite_ranks(
     ranks: dict[str, int],
     *,
     clone: bool = True,
+    kappa_max: Optional[float] = None,
 ) -> dict[str, Any]:
     """Replace Linears using cached whitened SVD truncated to ``ranks[name]``."""
     target = copy.deepcopy(model) if clone else model
@@ -150,7 +186,8 @@ def apply_spectralite_ranks(
             continue
 
         rank = int(ranks[name])
-        u_hat, v_hat = _factors_from_cache(entry, rank)
+        u_hat, v_hat, stab = _factors_from_cache(entry, rank, kappa_max=kappa_max)
+        rank = int(stab["rank"])
         lr = lowrank_from_factors(linear, u_hat, v_hat)
         set_module_by_name(target, name, lr)
 
@@ -171,6 +208,10 @@ def apply_spectralite_ranks(
                 "compressibility": float(entry["compressibility"]),
                 "stable_rank": float(entry["stable_rank"]),
                 "protect": float(entry["protect"]),
+                "kappa_cov": stab["kappa_cov"],
+                "kappa_trunc": stab["kappa_trunc"],
+                "kappa_bumped": stab["kappa_bumped"],
+                "recon_rel_error": stab["recon_rel_error"],
                 "flop_break_even": be,
                 "below_break_even": rank < be,
                 "dense_params": dense_n,
@@ -179,7 +220,7 @@ def apply_spectralite_ranks(
             }
         )
         logger.info(
-            "SpectraLite %s: (%d×%d)→r=%d (rho=%.1f protect=%.4f) params %d→%d",
+            "SpectraLite %s: (%d×%d)→r=%d (rho=%.1f protect=%.4f) params %d→%d recon=%.3g",
             name,
             m,
             n,
@@ -188,10 +229,12 @@ def apply_spectralite_ranks(
             float(entry["protect"]),
             dense_n,
             lr_n,
+            stab["recon_rel_error"],
         )
 
     summary = {
         "method": "spectralite_spectral_alloc",
+        "kappa_max": kappa_max,
         "num_replaced": len(replacements),
         "num_skipped": len(skipped),
         "skipped": skipped,
@@ -200,6 +243,10 @@ def apply_spectralite_ranks(
         "params_saved_touched": dense_params - lowrank_params,
         "param_keep_ratio_touched": lowrank_params / max(dense_params, 1),
         "replacements": replacements,
+        "mean_recon_rel_error": (
+            sum(r["recon_rel_error"] for r in replacements) / max(len(replacements), 1)
+        ),
+        "num_kappa_bumped": sum(1 for r in replacements if r.get("kappa_bumped")),
     }
     return {"model": target, "summary": summary}
 
@@ -210,15 +257,20 @@ def allocate_and_compress(
     target_keep_ratio: float,
     *,
     clone: bool = True,
+    kappa_max: Optional[float] = None,
 ) -> dict[str, Any]:
     """Allocate ranks under ``target_keep_ratio`` and build compressed model."""
     metas = cache_to_alloc_metas(cache)
     alloc = allocate_ranks_for_budget(metas, target_keep_ratio)
-    packed = apply_spectralite_ranks(model, cache, alloc["ranks"], clone=clone)
+    packed = apply_spectralite_ranks(
+        model, cache, alloc["ranks"], clone=clone, kappa_max=kappa_max
+    )
     packed["allocation"] = alloc
     packed["allocation_rows"] = allocation_table(metas, alloc["ranks"])
     packed["summary"]["target_keep_ratio"] = alloc["target_keep_ratio"]
-    packed["summary"]["achieved_keep_ratio"] = alloc["achieved_keep_ratio"]
+    packed["summary"]["achieved_keep_ratio"] = float(
+        packed["summary"]["param_keep_ratio_touched"]
+    )
     packed["summary"]["lambda"] = alloc["lambda"]
     return packed
 
