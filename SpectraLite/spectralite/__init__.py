@@ -17,4 +17,4 @@ __all__ = [
     "__version__",
 ]
 
-__version__ = "0.5.0-phase3"
+__version__ = "0.6.0-phase4"
