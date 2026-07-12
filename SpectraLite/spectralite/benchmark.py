@@ -1,4 +1,4 @@
-"""Phase 1 dense baseline orchestrator."""
+"""Shared profiling orchestrator for Phase 1+ baselines."""
 
 from __future__ import annotations
 
@@ -37,27 +37,31 @@ def run_phase1_dense_baseline(
     run_calflops: bool = True,
     run_ppl: bool = True,
     csv_name: str = "phase1_dense_baselines.csv",
+    phase: str = "1",
+    method: str = "dense",
+    notes: Optional[str] = None,
+    persist_artifacts: bool = True,
+    analytic_flops_fwd_ratio: float = 1.0,
 ) -> dict[str, Any]:
-    """Run Phase-1 dense profiling and append one CSV row.
+    """Profile a model (dense or compressed) and append a CSV row.
 
-    Reuses an already-loaded Phase-0 model when available.
+    Set ``persist_artifacts=False`` when calling from Phase 2+ so Phase-1
+    status is not overwritten.
     """
     cfg = config or default_config()
     cfg.ensure_directories()
     device = get_model_device(model)
     dtype = get_model_dtype(model)
 
-    print_section("Phase 1 — Dense Baseline Profiling")
+    print_section(f"Profiling — phase={phase} method={method}")
     print_kv("Model", cfg.model_name)
     print_kv("Device", str(device))
     print_kv("Dtype", str(dtype).replace("torch.", ""))
 
-    # --- params ---
     param_stats = analytic_model_param_stats(model)
     print_kv("Parameters", f"{param_stats['param_count']:,}")
     print_kv("Weight memory", param_stats["param_memory_human"])
 
-    # --- synthetic prefill batch for FLOPs + latency ---
     input_ids = torch.randint(
         low=0,
         high=max(tokenizer.vocab_size - 1, 1),
@@ -92,7 +96,10 @@ def run_phase1_dense_baseline(
         warmup=latency_warmup,
         reps=latency_reps_prefill,
     )
-    print_kv("Prefill ms (mean±std)", f"{prefill['prefill_ms_mean']:.3f} ± {prefill['prefill_ms_std']:.3f}")
+    print_kv(
+        "Prefill ms (mean±std)",
+        f"{prefill['prefill_ms_mean']:.3f} ± {prefill['prefill_ms_std']:.3f}",
+    )
 
     print_section("Latency — Generate (decode-oriented)")
     decode = measure_decode_latency(
@@ -129,16 +136,19 @@ def run_phase1_dense_baseline(
         print_kv("PTB PPL", ppl_stats.get("ppl_ptb"))
         print_kv("C4 PPL", ppl_stats.get("ppl_c4"))
 
+    default_notes = notes or (
+        "phase1_dense_opt125m_colab_dev; ppl_seq_len may be <2048 for iteration"
+    )
     row = empty_row(
-        phase="1",
-        method="dense",
+        phase=str(phase),
+        method=method,
         model_name=cfg.model_name,
         device=str(device),
         dtype=str(dtype).replace("torch.", ""),
         seed=cfg.seed,
         param_count=param_stats["param_count"],
         param_memory_mb=param_stats["param_memory_mb"],
-        analytic_flops_fwd_ratio=1.0,
+        analytic_flops_fwd_ratio=analytic_flops_fwd_ratio,
         empirical_flops_fwd=flop_stats["empirical_flops_fwd"],
         calflops_mflops_per_token=calflops_stats.get("calflops_mflops_per_token"),
         prefill_ms_mean=prefill["prefill_ms_mean"],
@@ -155,7 +165,7 @@ def run_phase1_dense_baseline(
         ppl_seq_len=ppl_stats.get("ppl_seq_len"),
         ppl_max_tokens=ppl_stats.get("ppl_max_tokens"),
         zero_shot_avg=None,
-        notes="phase1_dense_opt125m_colab_dev; ppl_seq_len may be <2048 for iteration",
+        notes=default_notes,
     )
 
     csv_path = Path(cfg.results_dir) / csv_name
@@ -174,12 +184,12 @@ def run_phase1_dense_baseline(
         "ppl": ppl_stats,
     }
 
-    # Persist git-tracked Phase 1 artifacts + phase_status.json
-    try:
-        from spectralite.artifacts import save_phase1_artifacts
+    if persist_artifacts and str(phase) == "1":
+        try:
+            from spectralite.artifacts import save_phase1_artifacts
 
-        save_phase1_artifacts(out, config=cfg)
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("Could not write phase1 artifacts: %s", exc)
+            save_phase1_artifacts(out, config=cfg)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Could not write phase1 artifacts: %s", exc)
 
     return out

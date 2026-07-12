@@ -6,7 +6,6 @@ from typing import Any, Optional
 
 from spectralite.artifacts import (
     is_phase_complete,
-    load_status,
     print_git_save_instructions,
     print_progress_dashboard,
     read_json,
@@ -27,16 +26,7 @@ def restore_session(
     model: Any = None,
     tokenizer: Any = None,
 ) -> dict[str, Any]:
-    """Restore experiment context after ``git pull`` on a fresh runtime.
-
-    - Always shows the progress dashboard from ``results/phase_status.json``.
-    - Reloads the HF model only if a later incomplete phase needs it (or forced).
-    - Does **not** re-run FLOP/PPL/latency if those phases are marked complete.
-
-    Returns:
-        Dict with ``status``, ``cfg``, ``model``, ``tokenizer``, ``skip_phase0``,
-        ``skip_phase1``, and cached summaries when available.
-    """
+    """Restore experiment context after ``git pull`` on a fresh runtime."""
     cfg = config or default_config()
     cfg.ensure_directories()
     set_seed(cfg.seed)
@@ -44,9 +34,11 @@ def restore_session(
     status = print_progress_dashboard(cfg)
     skip0 = should_skip_phase("0", config=cfg)
     skip1 = should_skip_phase("1", config=cfg)
+    skip2 = should_skip_phase("2", config=cfg)
 
     phase0_summary = None
     phase1_summary = None
+    phase2_summary = None
     if skip0:
         try:
             phase0_summary = read_json("phase0_summary.json", cfg)
@@ -61,14 +53,18 @@ def restore_session(
         except FileNotFoundError:
             logger.warning("Phase 1 marked complete but summary JSON missing")
             skip1 = False
+    if skip2:
+        try:
+            phase2_summary = read_json("phase2_summary.json", cfg)
+            print_kv("Loaded Phase 2 summary", "results/phase2_summary.json")
+        except FileNotFoundError:
+            logger.warning("Phase 2 marked complete but summary JSON missing")
+            skip2 = False
 
-    # Decide whether we need weights in memory for the *next* work.
-    next_needs_model = not is_phase_complete("1", cfg) or force_reload_model
-    # Future phases 2+ will also need the model; if 0 and 1 done, still load for phase 2+.
-    if is_phase_complete("0", cfg) and is_phase_complete("1", cfg):
-        # If everything through 1 is done, next phase (2+) needs model unless all done.
-        planned = ["2", "3", "4", "5", "6", "7", "8"]
-        next_needs_model = any(not is_phase_complete(p, cfg) for p in planned)
+    planned = ["1", "2", "3", "4", "5", "6", "7", "8"]
+    next_needs_model = force_reload_model or any(
+        not is_phase_complete(p, cfg) for p in planned
+    )
 
     if model is not None and tokenizer is not None and not force_reload_model:
         print_section("Reusing in-memory model from this runtime")
@@ -77,7 +73,6 @@ def restore_session(
         model, tokenizer = load_model_and_tokenizer(config=cfg)
     else:
         print_section("Model load skipped (not required yet / already complete)")
-        model, tokenizer = model, tokenizer
 
     print_git_save_instructions()
 
@@ -88,7 +83,9 @@ def restore_session(
         "tokenizer": tokenizer,
         "skip_phase0": skip0,
         "skip_phase1": skip1,
+        "skip_phase2": skip2,
         "phase0_summary": phase0_summary,
         "phase1_summary": phase1_summary,
+        "phase2_summary": phase2_summary,
         "force_reload_model": force_reload_model,
     }

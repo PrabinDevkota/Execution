@@ -22,8 +22,11 @@ def _load_text_corpus(name: str, *, streaming_c4: bool = True) -> str:
         ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test")
         return "\n\n".join(t for t in ds["text"] if t and t.strip())
     if name in {"ptb", "penn"}:
-        ds = load_dataset("ptb_text_only", split="test")
-        # field is usually "sentence"
+        try:
+            ds = load_dataset("ptb_text_only", split="test")
+        except Exception:
+            # Fallback mirror used by some HF mirrors / older caches
+            ds = load_dataset("penn_treebank", split="test")
         key = "sentence" if "sentence" in ds.column_names else ds.column_names[0]
         return "\n".join(t for t in ds[key] if t and str(t).strip())
     if name in {"c4"}:
@@ -54,36 +57,49 @@ def compute_perplexity(
 
     For the paper protocol use ``seq_len=2048`` and a large ``max_tokens``.
     Phase 1 defaults are lighter for Colab iteration on OPT-125M.
+
+    Loss is accumulated in float32 from logits to avoid fp16 overflow → NaN.
     """
+    from torch.nn import functional as F
+
     device = get_model_device(model)
     text = _load_text_corpus(corpus_name)
+    if not text.strip():
+        raise RuntimeError(f"Empty corpus text for {corpus_name}")
+
     enc = tokenizer(text, return_tensors="pt")
     input_ids = enc["input_ids"][0]
     if input_ids.numel() > max_tokens:
         input_ids = input_ids[:max_tokens]
 
     stride = seq_len if stride is None else stride
-    nlls: list[torch.Tensor] = []
+    nll_sum = torch.zeros((), dtype=torch.float32, device=device)
     total_tokens = 0
 
-    # HF causal LMs: shift logits/labels inside loss when labels provided.
     for begin in range(0, input_ids.numel(), stride):
         end = min(begin + seq_len, input_ids.numel())
         if end - begin < 2:
             break
         chunk = input_ids[begin:end].unsqueeze(0).to(device)
-        outputs = model(input_ids=chunk, labels=chunk)
-        # outputs.loss is mean NLL over non-masked tokens
-        n_tok = chunk.numel() - 1  # typical causal shift
-        nlls.append(outputs.loss.float() * n_tok)
-        total_tokens += n_tok
+        outputs = model(input_ids=chunk)
+        logits = outputs.logits.float()
+        shift_logits = logits[..., :-1, :].contiguous()
+        shift_labels = chunk[..., 1:].contiguous()
+        loss = F.cross_entropy(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            shift_labels.view(-1),
+            reduction="sum",
+        )
+        if torch.isnan(loss) or torch.isinf(loss):
+            raise RuntimeError(f"Non-finite NLL on {corpus_name} window [{begin}:{end}]")
+        nll_sum = nll_sum + loss
+        total_tokens += int(shift_labels.numel())
         if end >= input_ids.numel():
             break
 
     if total_tokens == 0:
         return {"perplexity": float("nan"), "tokens": 0.0, "seq_len": float(seq_len)}
 
-    nll_sum = torch.stack(nlls).sum()
     ppl = float(torch.exp(nll_sum / total_tokens).item())
     return {
         "perplexity": ppl,

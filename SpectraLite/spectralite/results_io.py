@@ -50,15 +50,9 @@ def append_results(
     path: Path | str,
     rows: Mapping[str, Any] | Sequence[Mapping[str, Any]],
 ) -> Path:
-    """Append one or more result rows to a CSV, creating it with a header if needed.
+    """Append one or more result rows to a CSV, creating it with a header if needed."""
+    import math
 
-    Args:
-        path: Destination CSV path.
-        rows: Single mapping or sequence of mappings (extra keys ignored).
-
-    Returns:
-        Resolved path written.
-    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     if isinstance(rows, Mapping):
@@ -66,13 +60,18 @@ def append_results(
     else:
         row_list = list(rows)
 
+    def _clean(value: Any) -> Any:
+        if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+            return ""
+        return value
+
     write_header = not path.exists() or path.stat().st_size == 0
     with path.open("a", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=RESULTS_COLUMNS, extrasaction="ignore")
         if write_header:
             writer.writeheader()
         for row in row_list:
-            writer.writerow({col: row.get(col) for col in RESULTS_COLUMNS})
+            writer.writerow({col: _clean(row.get(col)) for col in RESULTS_COLUMNS})
     return path
 
 
