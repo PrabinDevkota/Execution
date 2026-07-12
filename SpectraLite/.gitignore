@@ -77,3 +77,18 @@ htmlcov/
 *.safetensors
 profile_*.json
 trace_*.json
+
+# Paper draft (format slowly; keep local until ready to publish)
+latex_code/
+latex_code.tex
+latex_code/**
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.out
+*.toc
+*.lof
+*.lot
