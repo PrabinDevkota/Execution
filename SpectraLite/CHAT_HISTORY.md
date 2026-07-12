@@ -8,7 +8,7 @@ Last updated: 2026-07-13 (IST)
 
 Dev model: `facebook/opt-125m` · Hardware: Colab NVIDIA A100  
 Primary notebook: `notebooks/works.ipynb`  
-Paper draft (local, gitignored): `latex_code.tex`
+Paper draft (local, gitignored): `latex_code.tex` — **IEEE journal** class (`\documentclass[journal]{IEEEtran}`), with datasets section and Phase 0–8 results.
 
 This file records decisions and outcomes from Cursor chat sessions so work can resume without re-deriving context.
 
