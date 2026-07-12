@@ -56,14 +56,16 @@ pip install -r requirements.txt          # local (includes torch)
 # pip install -r requirements-colab.txt  # Colab only — never reinstalls torch
 ```
 
-### Colab workflow (recommended)
+### Colab workflow (all phases)
 
 1. Runtime → **GPU (A100)**  
-2. Open **`notebooks/Colab_Bootstrap.ipynb` via `File → Open notebook → GitHub`** (not by double-clicking in Files)  
-3. Run Bootstrap once per new runtime  
-4. Either run **optional Phase 0 inside Bootstrap**, or open other phase notebooks the same way: **`File → Open notebook → GitHub`**
+2. Open notebooks **only** via `File → Open notebook → GitHub` (or Bootstrap launcher links)  
+3. Run **`Colab_Bootstrap.ipynb` once** per new runtime  
+4. Open `Phase0` / `Phase1` / … the same GitHub way  
 
-**Never double-click `.ipynb` in the left Files panel** — that opens a raw text editor with no Run buttons. The full repo folder is still there; only the viewer is wrong.
+**Never double-click `.ipynb` in the left Files panel** — that opens a raw text editor for **every** notebook, not just Phase 0.
+
+Details: [`notebooks/README.md`](notebooks/README.md)
 
 ---
 
