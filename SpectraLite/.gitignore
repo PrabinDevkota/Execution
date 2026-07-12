@@ -1,0 +1,73 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging / install
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Experiment artifacts (keep directory placeholders)
+results/*
+!results/.gitkeep
+checkpoints/*
+!checkpoints/.gitkeep
+figures/*
+!figures/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Hugging Face / model caches (never commit)
+.cache/
+**/huggingface/
+**/transformers/
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+*.pem
+hf_token.txt
+
+# Coverage / test / type-check
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Torch / profiling dumps
+*.pt
+*.pth
+*.bin
+*.safetensors
+profile_*.json
+trace_*.json
