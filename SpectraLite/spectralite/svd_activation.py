@@ -32,9 +32,12 @@ def _activation_aware_factors(
     Follows SVD-LLM / ASVD:
       C ≈ LLᵀ,  W̃ = W L,  truncate SVD(W̃),  Ŵ = UΣVᵀ L⁻¹
     with σ fused into ``U_hat``.
+
+    Runs in float64 on CPU so weight (often CUDA) and covariance (CPU) match,
+    then the caller casts factors back onto the layer device.
     """
-    w = weight.detach().double()  # (out, in)
-    L = cholesky_factor(cov_in.double())  # (in, in)
+    w = weight.detach().double().cpu()  # (out, in)
+    L = cholesky_factor(cov_in.detach().double().cpu())  # (in, in)
     w_tilde = w @ L
     u, s, vh = torch.linalg.svd(w_tilde, full_matrices=False)
     rank = int(min(rank, u.shape[1], vh.shape[0]))
