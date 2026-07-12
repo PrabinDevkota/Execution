@@ -1,29 +1,27 @@
 # SpectraLite notebooks
 
-## How to open notebooks in Google Colab (all phases)
+## Main lab file
 
-**Never double-click** an `.ipynb` in Colab’s left Files panel.  
-That opens a raw text editor, not a runnable notebook. This affects **every** phase file.
+Use **[`works.ipynb`](works.ipynb)** for the whole research project (all phases in one notebook).
 
-### Correct workflow
+Open it in Colab via:
 
-1. New runtime → GPU (A100)
-2. Open `Colab_Bootstrap.ipynb` via **File → Open notebook → GitHub**
-3. Run Bootstrap (clone/pull + deps)
-4. Open **any** phase the same way: **File → Open notebook → GitHub**  
-   (or use the Colab links printed by Bootstrap’s launcher cell)
-5. When Colab asks about runtime: connect to the **existing** one
+`File → Open notebook → GitHub → SpectraLite/notebooks/works.ipynb`
 
-### Files
+**Never double-click** `.ipynb` files in the left Files panel (opens raw text mode).
 
-| Notebook | Role |
-|----------|------|
-| `Colab_Bootstrap.ipynb` | Once per runtime: repo + deps + launcher links |
-| `Phase0_Setup.ipynb` | Environment / model / Linear inventory smoke test |
-| `Phase1_…` (later) | Baseline harness |
-| … | Later research phases |
+## Workflow
 
-### Same-runtime reminder
+1. New Colab runtime → GPU (A100)
+2. Open `works.ipynb` from GitHub
+3. Run **Stage 0** (bootstrap) then the phase you need
+4. Save a copy to GitHub
+5. Ask Cursor to implement the next phase section in `works.ipynb`
 
-Opening another notebook via GitHub does **not** wipe GPU memory installs or `/content/Execution` if you connect to the existing runtime.  
-Deleting the runtime does.
+## Legacy notebooks
+
+| File | Status |
+|------|--------|
+| `works.ipynb` | **Primary** — use this |
+| `Colab_Bootstrap.ipynb` | Legacy (folded into Stage 0 of `works.ipynb`) |
+| `Phase0_Setup.ipynb` | Legacy (folded into Phase 0 of `works.ipynb`) |
