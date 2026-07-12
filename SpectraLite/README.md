@@ -59,23 +59,11 @@ pip install -r requirements.txt          # local (includes torch)
 ### Colab workflow (recommended)
 
 1. Runtime → **GPU (A100)**  
-2. Open and run **`notebooks/Colab_Bootstrap.ipynb` once** per new runtime  
-   (clone/pull + Colab-safe deps + CUDA check)  
-3. Then open the phase you need (`Phase0_Setup.ipynb`, later `Phase1_…`, etc.)
+2. Open **`notebooks/Colab_Bootstrap.ipynb` via `File → Open notebook → GitHub`** (not by double-clicking in Files)  
+3. Run Bootstrap once per new runtime  
+4. Either run **optional Phase 0 inside Bootstrap**, or open other phase notebooks the same way: **`File → Open notebook → GitHub`**
 
-Or one cell at the top of any phase notebook:
-
-```python
-from spectralite.colab_setup import ensure_environment
-ensure_environment()
-```
-
-Dependency files:
-
-| File | Use when |
-|------|----------|
-| `requirements-colab.txt` | Google Colab (no torch — keeps CUDA wheel) |
-| `requirements.txt` | Local machine / non-Colab |
+**Never double-click `.ipynb` in the left Files panel** — that opens a raw text editor with no Run buttons. The full repo folder is still there; only the viewer is wrong.
 
 ---
 
