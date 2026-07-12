@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T16:58:54Z",
+  "updated_at": "2026-07-12T17:11:04Z",
   "phases": {
     "0": {
       "complete": true,
@@ -79,6 +79,29 @@
         "last_prefill_ms": 9.975671513875325
       },
       "notes": "Activation-whitened truncated SVD (SVD-LLM/ASVD-style Cholesky + ridge)."
+    },
+    "4": {
+      "complete": true,
+      "completed_at": "2026-07-12T17:11:04Z",
+      "artifacts": {
+        "summary": "results/phase4_summary.json",
+        "allocations": "results/phase4_allocations.json",
+        "spectrum": "results/phase4_spectrum_meta.json",
+        "csv": "results/phase4_spectralite.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "target_keep_ratios": [
+          0.7502439024390244,
+          0.6,
+          0.4497560975609756
+        ],
+        "num_settings": 3,
+        "last_method": "spectralite_keep0.45",
+        "last_ppl_c4": 5780.87109375,
+        "last_prefill_ms": 10.359569009145101
+      },
+      "notes": "SpectraLite novelty: Roy–Vetterli ρ_eff + stable-rank protect scores; binary-search λ under Phase-3-matched FLOP keep ratios."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
