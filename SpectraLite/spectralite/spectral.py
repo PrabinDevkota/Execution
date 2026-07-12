@@ -85,11 +85,11 @@ def protect_score(
         return float(rho_eff) / float(q)
     if mode in {"stable_rank", "sr", "stable"}:
         return float(stable_rank_val) / float(q)
-    # full
+    # full (legacy; Phase 7 showed this hurts OPT-125M)
     return (float(rho_eff) / float(q)) * (float(stable_rank_val) / float(q))
 
 
-def spectrum_metrics(singular_values: torch.Tensor, *, protect_mode: str = "full") -> dict[str, Any]:
+def spectrum_metrics(singular_values: torch.Tensor, *, protect_mode: str = "rho") -> dict[str, Any]:
     """Bundle spectral statistics used by the Phase-4 allocator."""
     q = int(singular_values.numel())
     rho = effective_rank(singular_values)

@@ -44,6 +44,7 @@ def run_phase4_spectralite_sweep(
     *,
     config: Optional[Config] = None,
     target_keep_ratios: Optional[Sequence[float]] = None,
+    protect_mode: str = "rho",
     calib_num_sequences: int = 32,
     calib_seq_len: int = 512,
     calib_batch_size: int = 2,
@@ -52,20 +53,20 @@ def run_phase4_spectralite_sweep(
     ppl_max_tokens: int = 30_000,
     latency_reps_prefill: int = 30,
     latency_reps_decode: int = 20,
-    csv_name: str = "phase4_spectralite.csv",
+    csv_name: str = "phase4_spectralite_rho.csv",
 ) -> dict[str, Any]:
     """Whitened spectral-entropy allocation at Phase-3-matched FLOP budgets.
 
-    Novelty (Phase 4): per-matrix Roy–Vetterli ``ρ_eff`` + stable-rank importance
-    → protect score → global binary-search ``λ`` under a keep-ratio budget.
-    Sensitivity Fisher / Ledoit–Wolf / latency gate arrive in Phases 5–6.
+    Default protect mode is ``rho`` (Roy–Vetterli ``ρ_eff/q`` only). Phase 7
+    showed ``full`` = (ρ/q)·(stable_rank/q) collapses PPL on OPT-125M, while
+    ``rho`` nearly matches uniform ActSVD at keep≈0.75.
     """
     cfg = config or default_config()
     cfg.ensure_directories()
 
     budgets = list(target_keep_ratios) if target_keep_ratios is not None else _budgets_from_phase3(cfg)
 
-    print_section("Phase 4 — Calibration (WikiText-2)")
+    print_section(f"Phase 4 — Calibration (WikiText-2) | protect_mode={protect_mode}")
     batches = load_wikitext2_calibration_batches(
         tokenizer,
         num_sequences=calib_num_sequences,
@@ -81,6 +82,7 @@ def run_phase4_spectralite_sweep(
         "phase4_spectrum_meta.json",
         {
             "ridge": ridge,
+            "protect_mode": protect_mode,
             "calib_num_sequences": calib_num_sequences,
             "calib_seq_len": calib_seq_len,
             "layers": {
@@ -89,7 +91,7 @@ def run_phase4_spectralite_sweep(
                     "rho_eff": float(e["rho_eff"]),
                     "compressibility": float(e["compressibility"]),
                     "stable_rank": float(e["stable_rank"]),
-                    "protect": float(e["protect"]),
+                    "protect_full": float(e["protect"]),
                     "in_features": int(e["in_features"]),
                     "out_features": int(e["out_features"]),
                 }
@@ -102,16 +104,22 @@ def run_phase4_spectralite_sweep(
     all_pack_summaries: list[dict[str, Any]] = []
     all_allocs: list[dict[str, Any]] = []
 
-    print_section("Phase 4 — SpectraLite allocation sweep (matched vs Phase 3)")
+    print_section("Phase 4 — SpectraLite ρ-allocation sweep (matched vs Phase 3)")
     for keep in budgets:
-        logger.info("SpectraLite target_keep=%.4f", keep)
-        packed = allocate_and_compress(dense_model, cache, float(keep), clone=True)
+        logger.info("SpectraLite protect=%s target_keep=%.4f", protect_mode, keep)
+        packed = allocate_and_compress(
+            dense_model,
+            cache,
+            float(keep),
+            clone=True,
+            protect_mode=protect_mode,
+        )
         compressed = packed["model"]
         summary = packed["summary"]
         alloc = packed["allocation"]
         print_spectralite_summary(summary, alloc)
 
-        method = f"spectralite_keep{keep:.2f}"
+        method = f"spectralite_{protect_mode}_keep{keep:.2f}"
         metrics = run_phase1_dense_baseline(
             compressed,
             tokenizer,
@@ -129,9 +137,10 @@ def run_phase4_spectralite_sweep(
             phase="4",
             method=method,
             notes=(
-                f"spectralite spectral-alloc keep_target={keep:.4f} "
-                f"achieved={alloc['achieved_keep_ratio']:.4f} lambda={alloc['lambda']:.6f}; "
-                f"ridge={ridge}; calib={calib_num_sequences}x{calib_seq_len}; "
+                f"spectralite protect={protect_mode} keep_target={keep:.4f} "
+                f"achieved={summary['param_keep_ratio_touched']:.4f} "
+                f"lambda={alloc['lambda']:.6f}; ridge={ridge}; "
+                f"calib={calib_num_sequences}x{calib_seq_len}; "
                 f"replaced={summary['num_replaced']}"
             ),
             persist_artifacts=False,
@@ -140,8 +149,9 @@ def run_phase4_spectralite_sweep(
         all_rows.append(metrics["row"])
         all_pack_summaries.append(
             {
+                "protect_mode": protect_mode,
                 "target_keep_ratio": alloc["target_keep_ratio"],
-                "achieved_keep_ratio": alloc["achieved_keep_ratio"],
+                "achieved_keep_ratio": summary["param_keep_ratio_touched"],
                 "lambda": alloc["lambda"],
                 "num_replaced": summary["num_replaced"],
                 "param_keep_ratio_touched": summary["param_keep_ratio_touched"],
@@ -163,6 +173,8 @@ def run_phase4_spectralite_sweep(
 
     payload = {
         "phase": "4",
+        "protect_mode": protect_mode,
+        "revision": "rho_default_after_phase7",
         "target_keep_ratios": budgets,
         "ridge": ridge,
         "calib_num_sequences": calib_num_sequences,
@@ -171,10 +183,19 @@ def run_phase4_spectralite_sweep(
         "summaries": all_pack_summaries,
         "csv": f"results/{csv_name}",
         "phase3_c4_reference": [122.61, 555.45, 2286.51],
+        "phase7_note": (
+            "Default protect_mode=rho after Phase 7: full (rho*stable_rank) C4~4799 "
+            "at keep0.75; rho-only C4~141 vs ActSVD~123."
+        ),
     }
     write_json(
         "phase4_allocations.json",
-        {"budgets": budgets, "allocations": all_allocs, "summaries": all_pack_summaries},
+        {
+            "protect_mode": protect_mode,
+            "budgets": budgets,
+            "allocations": all_allocs,
+            "summaries": all_pack_summaries,
+        },
     )
     write_json("phase4_summary.json", payload)
     mark_phase_complete(
@@ -187,6 +208,7 @@ def run_phase4_spectralite_sweep(
             "status": "results/phase_status.json",
         },
         metrics={
+            "protect_mode": protect_mode,
             "target_keep_ratios": budgets,
             "num_settings": len(all_rows),
             "last_method": all_rows[-1]["method"] if all_rows else None,
@@ -194,8 +216,9 @@ def run_phase4_spectralite_sweep(
             "last_prefill_ms": all_rows[-1].get("prefill_ms_mean") if all_rows else None,
         },
         notes=(
-            "SpectraLite novelty: Roy–Vetterli ρ_eff + stable-rank protect scores; "
-            "binary-search λ under Phase-3-matched FLOP keep ratios."
+            f"SpectraLite ρ_eff allocation (protect_mode={protect_mode}); "
+            "binary-search λ under Phase-3-matched FLOP keep ratios. "
+            "Revised after Phase 7 ablations."
         ),
         config=cfg,
     )

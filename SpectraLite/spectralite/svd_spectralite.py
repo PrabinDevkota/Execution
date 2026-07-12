@@ -99,9 +99,12 @@ def build_whitened_svd_cache(
 def cache_to_alloc_metas(
     cache: dict[str, dict[str, Any]],
     *,
-    protect_mode: str = "full",
+    protect_mode: str = "rho",
 ) -> list[LayerAllocMeta]:
-    """Convert whitened SVD cache into allocator metadata."""
+    """Convert whitened SVD cache into allocator metadata.
+
+    Default ``protect_mode=\"rho\"`` (Phase 7: full protect collapses on OPT-125M).
+    """
     from spectralite.spectral import protect_score
 
     metas: list[LayerAllocMeta] = []
@@ -270,9 +273,12 @@ def allocate_and_compress(
     *,
     clone: bool = True,
     kappa_max: Optional[float] = None,
-    protect_mode: str = "full",
+    protect_mode: str = "rho",
 ) -> dict[str, Any]:
-    """Allocate ranks under ``target_keep_ratio`` and build compressed model."""
+    """Allocate ranks under ``target_keep_ratio`` and build compressed model.
+
+    Default protect is ``rho`` (effective-rank only).
+    """
     metas = cache_to_alloc_metas(cache, protect_mode=protect_mode)
     alloc = allocate_ranks_for_budget(metas, target_keep_ratio)
     packed = apply_spectralite_ranks(
