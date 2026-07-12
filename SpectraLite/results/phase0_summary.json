@@ -1,15 +1,21 @@
 {
   "phase": "0",
+  "saved_at": "2026-07-12T16:06:46Z",
   "model_name": "facebook/opt-125m",
   "env": {
     "python_version": "3.12.13",
     "pytorch_version": "2.11.0+cu128",
     "cuda_available": true,
     "cuda_version": "12.8",
+    "cudnn_version": "91900",
+    "gpu_count": 1,
     "gpu_name": "NVIDIA A100-SXM4-40GB",
     "gpu_memory_total": "39.49 GB",
+    "gpu_memory_total_bytes": 42405855232,
     "device": "cuda",
-    "gpu_count": 1
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.35",
+    "processor": "x86_64",
+    "executable": "/usr/bin/python3"
   },
   "load_summary": {
     "model_name": "facebook/opt-125m",
@@ -29,6 +35,5 @@
     "dtype": "float16",
     "device": "cuda:0"
   },
-  "inference_ok": true,
-  "notes": "Backfilled from Colab Phase0 PASS; re-run Phase0 once to refresh linear_layers JSON if needed."
+  "inference_ok": true
 }

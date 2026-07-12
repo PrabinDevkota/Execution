@@ -1,13 +1,13 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T16:00:15Z",
+  "updated_at": "2026-07-12T16:08:32Z",
   "phases": {
     "0": {
       "complete": true,
-      "completed_at": "2026-07-12T16:00:15Z",
+      "completed_at": "2026-07-12T16:06:46Z",
       "artifacts": {
         "summary": "results/phase0_summary.json",
-        "status": "results/phase_status.json"
+        "linear_layers": "results/phase0_linear_layers.json"
       },
       "metrics": {
         "total_parameters": 125239296,
@@ -15,7 +15,25 @@
         "device": "cuda:0",
         "inference_ok": true
       },
-      "notes": "Backfilled from successful Colab Phase 0 (A100)."
+      "notes": "Phase 0 smoke test. Model weights not saved; reload from HF next session."
+    },
+    "1": {
+      "complete": true,
+      "completed_at": "2026-07-12T16:08:32Z",
+      "artifacts": {
+        "summary": "results/phase1_summary.json",
+        "csv": "results/phase1_dense_baselines.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "empirical_flops_fwd": 32231129088,
+        "prefill_ms_mean": 7.213670387268066,
+        "decode_ms_per_token_mean": 7.14000727335612,
+        "ppl_wikitext2": null,
+        "ppl_ptb": null,
+        "ppl_c4": 28.740318298339844
+      },
+      "notes": "Dense baseline. Skip re-run on new Colab unless FORCE_RERUN_PHASE1=True."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."

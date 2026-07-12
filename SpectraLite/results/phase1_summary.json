@@ -1,0 +1,61 @@
+{
+  "phase": "1",
+  "saved_at": "2026-07-12T16:08:32Z",
+  "csv_path": "/content/Execution/SpectraLite/results/phase1_dense_baselines.csv",
+  "row": {
+    "phase": "1",
+    "method": "dense",
+    "model_name": "facebook/opt-125m",
+    "device": "cuda:0",
+    "dtype": "float16",
+    "seed": 42,
+    "param_count": 125239296,
+    "param_memory_mb": 238.875,
+    "analytic_flops_fwd_ratio": 1.0,
+    "empirical_flops_fwd": 32231129088,
+    "calflops_mflops_per_token": 247.219968,
+    "prefill_ms_mean": 7.213670387268066,
+    "prefill_ms_std": 0.15415504044557737,
+    "decode_ms_per_token_mean": 7.14000727335612,
+    "decode_ms_per_token_std": 0.06543537595275979,
+    "throughput_tokens_per_s": 140.0558797372143,
+    "prompt_len": 128,
+    "gen_tokens": 64,
+    "batch_size": 1,
+    "ppl_wikitext2": null,
+    "ppl_ptb": null,
+    "ppl_c4": 28.740318298339844,
+    "ppl_seq_len": 512.0,
+    "ppl_max_tokens": 50000.0,
+    "zero_shot_avg": null,
+    "notes": "phase1_dense_opt125m_colab_dev; ppl_seq_len may be <2048 for iteration"
+  },
+  "prefill": {
+    "prefill_ms_mean": 7.213670387268066,
+    "prefill_ms_std": 0.15415504044557737,
+    "prefill_ms_median": 7.19155216217041,
+    "reps": 50.0
+  },
+  "decode": {
+    "prompt_len": 13.0,
+    "gen_tokens": 64.0,
+    "batch_size": 1.0,
+    "e2e_generate_ms_mean": 456.96046549479166,
+    "e2e_generate_ms_std": 4.187864060976627,
+    "decode_ms_per_token_mean": 7.14000727335612,
+    "decode_ms_per_token_std": 0.06543537595275979,
+    "throughput_tokens_per_s": 140.0558797372143,
+    "reps": 30.0
+  },
+  "ppl": {
+    "ppl_seq_len": 512.0,
+    "ppl_max_tokens": 50000.0,
+    "ppl_wikitext2": null,
+    "ppl_ptb": null,
+    "ppl_c4": 28.740318298339844
+  },
+  "flop_stats": {
+    "empirical_flops_fwd": 32231129088,
+    "empirical_gflops_fwd": 32.231129088
+  }
+}

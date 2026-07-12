@@ -1,0 +1,808 @@
+{
+  "model_name": "facebook/opt-125m",
+  "layers": [
+    {
+      "name": "model.decoder.layers.0.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.0.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.0.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.0.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.0.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.0.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.1.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.1.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.1.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.1.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.1.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.1.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.2.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.2.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.2.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.2.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.2.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.2.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.3.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.3.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.3.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.3.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.3.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.3.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.4.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.4.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.4.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.4.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.4.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.4.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.5.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.5.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.5.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.5.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.5.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.5.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.6.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.6.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.6.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.6.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.6.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.6.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.7.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.7.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.7.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.7.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.7.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.7.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.8.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.8.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.8.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.8.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.8.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.8.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.9.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.9.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.9.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.9.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.9.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.9.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.10.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.10.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.10.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.10.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.10.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.10.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "model.decoder.layers.11.self_attn.k_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.11.self_attn.v_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.11.self_attn.q_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.11.self_attn.out_proj",
+      "in_features": 768,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 590592
+    },
+    {
+      "name": "model.decoder.layers.11.fc1",
+      "in_features": 768,
+      "out_features": 3072,
+      "weight_shape": [
+        3072,
+        768
+      ],
+      "has_bias": true,
+      "param_count": 2362368
+    },
+    {
+      "name": "model.decoder.layers.11.fc2",
+      "in_features": 3072,
+      "out_features": 768,
+      "weight_shape": [
+        768,
+        3072
+      ],
+      "has_bias": true,
+      "param_count": 2360064
+    },
+    {
+      "name": "lm_head",
+      "in_features": 768,
+      "out_features": 50272,
+      "weight_shape": [
+        50272,
+        768
+      ],
+      "has_bias": false,
+      "param_count": 38608896
+    }
+  ]
+}
