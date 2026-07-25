@@ -33,7 +33,7 @@ Next flagship: LLaMA-3.2-1B.
 |------|------|--------|----------|
 | 0–8 | OPT-125M full ladder | **Done** | Gate dual/triple win; Spec-ρ competitive; zero-shot gated 38.3% |
 | **9** | Spec-ρ + gate (OPT-125M) | **Done** | Spec-ρ+gate zs≈37.9%; ActSVD+gate still best (C4≈111) |
-| **10** | OPT-1.3B scale ladder | **Done** (PPL/latency; no zs) | Gate dual win again; ActSVD+gate best compressed |
+| **10** | OPT-1.3B scale ladder | **Done** (PPL/latency; no zs) | Gate: decode −20%, thr +24%, C4 88→81; 0.86× dense |
 | 11+ | LLaMA-3.2-1B + runtime / zs | Planned | Absolute speedup + modern arch |
 
 ### Phase 8 zero-shot (OPT-125M, keep ≈0.75)
