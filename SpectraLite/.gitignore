@@ -78,10 +78,12 @@ htmlcov/
 profile_*.json
 trace_*.json
 
-# Paper draft (format slowly; keep local until ready to publish)
+# Paper draft / IEEE Access template (local only; do not push)
 latex_code/
 latex_code.tex
 latex_code/**
+IEEE_Access_LaTeX_template/
+IEEE_Access_LaTeX_template/**
 *.aux
 *.bbl
 *.blg
@@ -92,3 +94,5 @@ latex_code/**
 *.toc
 *.lof
 *.lot
+*.pdf
+!figures/**/*.pdf
