@@ -73,7 +73,13 @@ def run_lm_eval(
     method: str = "model",
 ) -> dict[str, Any]:
     """Run EleutherAI lm-eval zero-shot suite; return compact metrics dict."""
-    from lm_eval import simple_evaluate
+    try:
+        from lm_eval import simple_evaluate
+    except ModuleNotFoundError as exc:
+        raise ModuleNotFoundError(
+            "lm_eval is not installed. On Colab run: "
+            "pip install -q 'lm-eval>=0.4.0'  (or pip install -r requirements-colab.txt)"
+        ) from exc
 
     print_section(f"lm-eval — {method}")
     print_kv("Tasks", ", ".join(tasks))
