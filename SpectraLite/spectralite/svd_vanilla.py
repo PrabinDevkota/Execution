@@ -15,11 +15,13 @@ from spectralite.utils import get_logger, print_kv, print_section
 logger = get_logger(__name__)
 
 # Compress attention + MLP projections; keep lm_head / embeddings dense.
+# OPT uses out_proj/fc*; LLaMA uses o_proj + SwiGLU (gate/up/down).
 DEFAULT_COMPRESS_SUFFIXES: tuple[str, ...] = (
     "q_proj",
     "k_proj",
     "v_proj",
     "out_proj",
+    "o_proj",
     "fc1",
     "fc2",
     "gate_proj",
@@ -32,6 +34,7 @@ ATTN_COMPRESS_SUFFIXES: tuple[str, ...] = (
     "k_proj",
     "v_proj",
     "out_proj",
+    "o_proj",
 )
 
 MLP_COMPRESS_SUFFIXES: tuple[str, ...] = (

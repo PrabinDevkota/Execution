@@ -42,6 +42,8 @@ class Config:
     dtype: str = "float16"
     device_map: str = "auto"
     trust_remote_code: bool = False
+    # Optional HF Hub token for gated models (e.g. meta-llama/*). Prefer env HF_TOKEN.
+    hf_token: str | None = None
     max_new_tokens: int = 50
     smoke_prompt: str = "Explain Singular Value Decomposition in one sentence."
     # Phase 1 profiling defaults (paper protocol can raise these).
@@ -81,6 +83,9 @@ class Config:
         for key, value in payload.items():
             if isinstance(value, Path):
                 payload[key] = str(value)
+        # Never persist secrets into results artifacts.
+        if payload.get("hf_token"):
+            payload["hf_token"] = "***"
         return payload
 
 

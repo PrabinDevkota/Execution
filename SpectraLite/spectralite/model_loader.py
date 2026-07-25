@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Optional, Union
 
 import torch
@@ -29,6 +30,31 @@ def _require_transformers():
             "Install Phase 0 deps: pip install -r requirements.txt"
         ) from exc
     return AutoModelForCausalLM, AutoTokenizer
+
+
+def resolve_hf_token(
+    token: Optional[str] = None,
+    *,
+    config: Optional[Config] = None,
+) -> Optional[str]:
+    """Resolve a Hugging Face Hub token for gated models (e.g. meta-llama/*).
+
+    Priority: explicit ``token`` → ``config.hf_token`` → ``HF_TOKEN`` /
+    ``HUGGING_FACE_HUB_TOKEN`` environment variables.
+    """
+    if token:
+        return token
+    if config is not None and getattr(config, "hf_token", None):
+        return str(config.hf_token)
+    return os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+
+
+def _pretrained_auth_kwargs(token: Optional[str]) -> dict[str, Any]:
+    """Build kwargs accepted by both older and newer ``from_pretrained`` APIs."""
+    if not token:
+        return {}
+    # Newer huggingface_hub uses ``token=``; some older stacks used ``use_auth_token=``.
+    return {"token": token}
 
 
 def resolve_torch_dtype(dtype: Optional[str] = None, prefer_fp16_on_cuda: bool = True) -> torch.dtype:
@@ -72,12 +98,14 @@ def load_tokenizer(
     model_name: Optional[str] = None,
     *,
     config: Optional[Config] = None,
+    token: Optional[str] = None,
 ) -> TokenizerType:
     """Load a Hugging Face tokenizer for the configured model.
 
     Args:
         model_name: Override model identifier. Defaults to ``config.model_name``.
         config: Optional :class:`Config`. Uses Phase 0 defaults when omitted.
+        token: Optional HF Hub token (gated models).
 
     Returns:
         Loaded tokenizer with ``pad_token`` set when missing.
@@ -85,9 +113,15 @@ def load_tokenizer(
     _, AutoTokenizer = _require_transformers()
     cfg = config or default_config()
     name = model_name or cfg.model_name
+    auth = _pretrained_auth_kwargs(resolve_hf_token(token, config=cfg))
     logger.info("Loading tokenizer: %s", name)
 
-    tokenizer = AutoTokenizer.from_pretrained(name, use_fast=True)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(name, use_fast=True, **auth)
+    except TypeError:
+        # Older transformers: ``use_auth_token`` instead of ``token``.
+        legacy = {"use_auth_token": auth["token"]} if auth else {}
+        tokenizer = AutoTokenizer.from_pretrained(name, use_fast=True, **legacy)
 
     # Causal LMs often omit an explicit pad token; reuse EOS for batching safety.
     if tokenizer.pad_token is None:
@@ -103,6 +137,7 @@ def load_model(
     config: Optional[Config] = None,
     torch_dtype: Optional[Union[str, torch.dtype]] = None,
     device_map: Optional[str] = None,
+    token: Optional[str] = None,
 ) -> ModelType:
     """Load a causal language model with Phase 0 defaults.
 
@@ -113,6 +148,7 @@ def load_model(
         config: Optional :class:`Config`.
         torch_dtype: Explicit dtype override (string or torch dtype).
         device_map: Hugging Face device-map strategy.
+        token: Optional HF Hub token (gated models such as LLaMA-3.2).
 
     Returns:
         Loaded :class:`~transformers.PreTrainedModel` in eval mode.
@@ -121,6 +157,8 @@ def load_model(
     cfg = config or default_config()
     name = model_name or cfg.model_name
     map_strategy = device_map if device_map is not None else cfg.device_map
+    hf_token = resolve_hf_token(token, config=cfg)
+    auth = _pretrained_auth_kwargs(hf_token)
 
     if isinstance(torch_dtype, torch.dtype):
         dtype = torch_dtype
@@ -130,23 +168,34 @@ def load_model(
         dtype = resolve_torch_dtype(cfg.dtype, prefer_fp16_on_cuda=cuda_available())
 
     logger.info(
-        "Loading model: %s | dtype=%s | device_map=%s",
+        "Loading model: %s | dtype=%s | device_map=%s | auth=%s",
         name,
         dtype,
         map_strategy,
+        "yes" if hf_token else "no",
     )
 
     # Prefer `dtype=` (current HF API); fall back to `torch_dtype=` for older installs.
     load_kwargs = {
         "device_map": map_strategy,
         "trust_remote_code": cfg.trust_remote_code,
+        **auth,
     }
     try:
         model = AutoModelForCausalLM.from_pretrained(name, dtype=dtype, **load_kwargs)
     except TypeError:
-        model = AutoModelForCausalLM.from_pretrained(
-            name, torch_dtype=dtype, **load_kwargs
-        )
+        load_kwargs.pop("token", None)
+        if hf_token:
+            load_kwargs["use_auth_token"] = hf_token
+        try:
+            model = AutoModelForCausalLM.from_pretrained(
+                name, torch_dtype=dtype, **load_kwargs
+            )
+        except TypeError:
+            load_kwargs.pop("use_auth_token", None)
+            model = AutoModelForCausalLM.from_pretrained(
+                name, torch_dtype=dtype, **load_kwargs
+            )
     model.eval()
     return model
 
@@ -155,20 +204,22 @@ def load_model_and_tokenizer(
     model_name: Optional[str] = None,
     *,
     config: Optional[Config] = None,
+    token: Optional[str] = None,
 ) -> tuple[ModelType, TokenizerType]:
     """Load both model and tokenizer with shared configuration.
 
     Args:
         model_name: Optional HF model id override.
         config: Optional :class:`Config`.
+        token: Optional HF Hub token (gated models).
 
     Returns:
         ``(model, tokenizer)`` pair.
     """
     cfg = config or default_config()
     name = model_name or cfg.model_name
-    tokenizer = load_tokenizer(name, config=cfg)
-    model = load_model(name, config=cfg)
+    tokenizer = load_tokenizer(name, config=cfg, token=token)
+    model = load_model(name, config=cfg, token=token)
     return model, tokenizer
 
 

@@ -22,7 +22,8 @@ Next flagship: LLaMA-3.2-1B.
 | 9 | Spec-ρ + gate (125M) | **Done** | ActSVD+gate still best compressed |
 | 10 | OPT-1.3B PPL/latency | **Done** | Gate: decode −20%, thr +24%, C4 88→81 |
 | **10b** | OPT-1.3B zero-shot | **Done** | ActSVD+gate **44.5% (88.1% dense)**; BoolQ 61.1% > dense |
-| 11+ | LLaMA-3.2-1B + runtime | Planned | Absolute speedup / modern arch |
+| **11** | LLaMA-3.2-1B PPL/latency | **Code ready** | Run in Colab (HF token cell); memory-lean Phase-10 recipe |
+| **11b** | LLaMA-3.2-1B zero-shot | **Code ready** | Same 7 tasks; after Phase 11 |
 
 ### OPT-1.3B Phase 10b zero-shot
 
@@ -38,7 +39,7 @@ Next flagship: LLaMA-3.2-1B.
 ---
 
 ## Next steps
-1. LLaMA-3.2-1B (memory-lean Phase 10/10b recipe; HF token)  
+1. **Run Phase 11 / 11b on Colab** (`works.ipynb`: paste HF token → Phase 11 → Phase 11b). Push code first (or `SKIP_GIT_SYNC=True` + upload).  
 2. Runtime co-design if still ≤1× vs dense  
 3. Optional: official ASVD/SVD-LLM baselines  
 
