@@ -33,8 +33,8 @@ Flagship later: LLaMA-3.2-1B (after OPT-1.3B).
 | Phase | What | Status | Headline |
 |------|------|--------|----------|
 | 0–8 | OPT-125M full ladder | **Done** | Gate dual/triple win; Spec-ρ competitive; zero-shot gated 38.3% |
-| **9** | Spec-ρ **+** latency gate (OPT-125M) | **Code ready — run in Colab** | Closes deploy-default gap |
-| **10** | OPT-1.3B scale ladder | **Code ready — run in Colab** | Same-family step toward absolute speedup |
+| **9** | Spec-ρ **+** latency gate (OPT-125M) | **Done** | Spec-ρ gated C4≈141, decode≈9.77ms, zs≈37.9%; ActSVD gated still stronger (C4≈111, 8.44ms) |
+| **10** | OPT-1.3B scale ladder | **Code ready — run in Colab (memory-lean)** | Same-family step toward absolute speedup |
 | 11+ | LLaMA-3.2-1B + runtime co-design | Planned | Packed MLP / CUDA-graph / FlashSVD handoff |
 
 ### Phase 8 zero-shot averages (keep ≈0.75) — recorded

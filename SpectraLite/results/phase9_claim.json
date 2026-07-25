@@ -1,0 +1,9 @@
+{
+  "spec_rho_ungated_c4": 140.675048828125,
+  "spec_rho_gated_c4": 141.04742431640625,
+  "spec_rho_ungated_decode_ms": 10.11980357170105,
+  "spec_rho_gated_decode_ms": 9.76936902999878,
+  "actsvd_gated_c4": 110.6627426147461,
+  "actsvd_gated_decode_ms": 8.435747385025024,
+  "spec_rho_gated_zero_shot_avg": 0.37897290571362213
+}

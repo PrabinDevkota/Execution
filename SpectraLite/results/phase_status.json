@@ -183,6 +183,27 @@
         "dense_avg": 0.4178809588176466
       },
       "notes": "Zero-shot lm-eval on dense, ActSVD, gated ActSVD, SpectraLite-rho at ratio=0.5/keep=0.75."
+    },
+    "9": {
+      "complete": true,
+      "completed_at": "2026-07-25T10:30:00Z",
+      "artifacts": {
+        "summary": "results/phase9_summary.json",
+        "claim": "results/phase9_claim.json",
+        "csv": "results/phase9_spectralite_gate.csv",
+        "zeroshot": "results/phase9_zeroshot_spectralite_rho_gate.json",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "keep_ratio": 0.75,
+        "kappa_speed": 1.0,
+        "spec_rho_gated_c4": 141.04742431640625,
+        "spec_rho_gated_decode_ms": 9.76936902999878,
+        "spec_rho_gated_zero_shot_avg": 0.37897290571362213,
+        "actsvd_gated_c4": 110.6627426147461,
+        "actsvd_gated_decode_ms": 8.435747385025024
+      },
+      "notes": "SpectraLite-ρ ± latency gate vs ActSVD ± gate at keep≈0.75; Spec-ρ+gate zero-shot ~37.9%."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
