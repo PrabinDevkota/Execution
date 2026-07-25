@@ -6,7 +6,8 @@ Last updated: 2026-07-25 (IST)
 **Project path in repo:** `SpectraLite/`  
 Primary notebook: `notebooks/works.ipynb`  
 Paper draft (local, **gitignored**): `IEEE_Access_LaTeX_template/access.tex`  
-(old `latex_code.tex` is only a pointer; edit Access folder from now on).
+(old `latex_code.tex` is only a pointer; edit Access folder from now on).  
+Paper figures: `IEEE_Access_LaTeX_template/figures/` (regenerate via `fig_*/generate.py` or `generate_figure.ipynb`).
 
 Dev models: `facebook/opt-125m` · `facebook/opt-1.3b` · Hardware: Colab A100  
 Next flagship: LLaMA-3.2-1B.
