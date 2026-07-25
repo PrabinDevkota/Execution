@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-12T18:38:16Z",
+  "updated_at": "2026-07-25T11:21:34Z",
   "phases": {
     "0": {
       "complete": true,
@@ -204,6 +204,24 @@
         "actsvd_gated_decode_ms": 8.435747385025024
       },
       "notes": "SpectraLite-ρ ± latency gate vs ActSVD ± gate at keep≈0.75; Spec-ρ+gate zero-shot ~37.9%."
+    },
+    "10": {
+      "complete": true,
+      "completed_at": "2026-07-25T11:21:34Z",
+      "artifacts": {
+        "summary": "results/phase10_summary.json",
+        "claim": "results/phase10_claim.json",
+        "csv": "results/phase10_opt13b.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "model_name": "facebook/opt-1.3b",
+        "spec_rho_gated_c4": 89.93896484375,
+        "spec_rho_gated_decode_speedup": 0.7346754451869362,
+        "spec_rho_gated_zero_shot_avg": null,
+        "max_tokens_per_layer": 4096
+      },
+      "notes": "Memory-lean scale ladder on facebook/opt-1.3b: max_tokens/layer=4096, float32 cache, zero_shot deferred by default."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."

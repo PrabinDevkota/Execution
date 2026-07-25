@@ -6,11 +6,10 @@ Last updated: 2026-07-25 (IST)
 **Project path in repo:** `SpectraLite/`  
 **Clone / Colab:** open notebooks from that GitHub tree (not local Files double-click).
 
-Dev model: `facebook/opt-125m` · Hardware: Colab NVIDIA A100  
+Dev models: `facebook/opt-125m` (Phases 0–9) · `facebook/opt-1.3b` (Phase 10)  
+Hardware: Colab NVIDIA A100  
 Primary notebook: `notebooks/works.ipynb`  
-Paper draft (local, gitignored): `latex_code.tex` — IEEE journal class; Phases 0–8 results.
-
-This file records decisions and outcomes from Cursor chat sessions so work can resume without re-deriving context.
+Paper draft (local, gitignored): `latex_code.tex` — IEEE journal; Phases 0–10 results.
 
 ---
 
@@ -24,7 +23,7 @@ Core ideas:
 3. **Latency feasibility gate**: compress only if \(r < \kappa_{\mathrm{speed}} \cdot mn/(m+n)\)  
 4. Optional stability modules (Ledoit–Wolf, \(\kappa\)) — studied; ridge preferred on OPT-125M  
 
-Flagship later: LLaMA-3.2-1B (after OPT-1.3B).
+Next flagship: LLaMA-3.2-1B.
 
 ---
 
@@ -33,62 +32,66 @@ Flagship later: LLaMA-3.2-1B (after OPT-1.3B).
 | Phase | What | Status | Headline |
 |------|------|--------|----------|
 | 0–8 | OPT-125M full ladder | **Done** | Gate dual/triple win; Spec-ρ competitive; zero-shot gated 38.3% |
-| **9** | Spec-ρ **+** latency gate (OPT-125M) | **Done** | Spec-ρ gated C4≈141, decode≈9.77ms, zs≈37.9%; ActSVD gated still stronger (C4≈111, 8.44ms) |
-| **10** | OPT-1.3B scale ladder | **Code ready — run in Colab (memory-lean)** | Same-family step toward absolute speedup |
-| 11+ | LLaMA-3.2-1B + runtime co-design | Planned | Packed MLP / CUDA-graph / FlashSVD handoff |
+| **9** | Spec-ρ + gate (OPT-125M) | **Done** | Spec-ρ+gate zs≈37.9%; ActSVD+gate still best (C4≈111) |
+| **10** | OPT-1.3B scale ladder | **Done** (PPL/latency; no zs) | Gate dual win again; ActSVD+gate best compressed |
+| 11+ | LLaMA-3.2-1B + runtime / zs | Planned | Absolute speedup + modern arch |
 
-### Phase 8 zero-shot averages (keep ≈0.75) — recorded
+### Phase 8 zero-shot (OPT-125M, keep ≈0.75)
 
-| Method | Avg | Retention vs dense |
-|--------|-----|--------------------|
+| Method | Avg | Retention |
+|--------|-----|-----------|
 | Dense | 41.8% | 100% |
 | ActSVD gated | **38.3%** | **91.7%** |
 | SpectraLite-ρ | 37.5% | 89.7% |
 | ActSVD ungated | 36.7% | 87.8% |
 
+### Phase 10 headline (OPT-1.3B, keep ≈0.75, memory-lean)
+
+| Method | C4 ↓ | Decode ms/tok | vs dense decode | #comp / gated-dense |
+|--------|------|---------------|-----------------|---------------------|
+| Dense | **18.0** | **14.0** | 1.00× | — |
+| ActSVD | 88.1 | 20.3 | 0.69× | 144 / 0 |
+| **ActSVD + gate** | **80.5** | **16.3** | **0.86×** | **48 / 96** |
+| Spec-ρ | 96.7 | 20.0 | 0.70× | 144 / 0 |
+| Spec-ρ + gate | 89.9 | 19.1 | 0.73× | 113 / 31 |
+
+Lean protocol: calib 16×256, max_tokens/layer=4096, float32 SVD cache. Zero-shot deferred.
+
 ---
 
 ## 3. Main highlight (agreed framing)
 
-**Headline novelty:** the **latency feasibility gate** — improves decode latency, C4 perplexity, *and* zero-shot accuracy vs ungated ActSVD by refusing break-even attention factorization and compressing MLPs instead.
+**Headline novelty:** the **latency feasibility gate** — on both OPT-125M and OPT-1.3B, gated ActSVD improves decode *and* C4 vs ungated by keeping break-even attention dense and compressing MLPs.
 
-Supporting pillars:
-- Whitening: vanilla C4 922 → ActSVD 123 (7.5×)  
-- SpectraLite-ρ: competitive spectral alternative; slightly better WT2; beats ungated on zero-shot avg  
-- Protect design: ρ-only works; ρ×stable-rank fails  
-- Honest limit: no absolute >1× decode vs dense on OPT-125M batch=1 yet  
+Supporting:
+- Whitening necessary (125M: vanilla C4 922 → 123)  
+- Spec-ρ competitive on 125M; **behind ActSVD on 1.3B** at this keep  
+- Spec-ρ+gate only weakly gated on 1.3B (31 layers) because ρ already lowers many attn ranks below break-even  
+- Honest: still **no absolute >1× decode vs dense** at batch=1  
 
 ---
 
-## 4. Next-stage plan (active)
+## 4. Next-stage plan
 
-1. **Phase 9 (OPT-125M):** run `works.ipynb` Phase 9 cell → Spec-ρ ± gate vs ActSVD ± gate + Spec-ρ+gate zero-shot → commit `results/phase9_*`.  
-2. **Phase 10 (OPT-1.3B):** run Phase 10 cell (loads `facebook/opt-1.3b`) → dense / ActSVD / Spec-ρ ± gate + zero-shot → commit `results/phase10_*`.  
-3. **Then:** LLaMA-3.2-1B (HF token), update `latex_code.tex` tables in place.  
-4. **If still ≤1× vs dense:** stricter \(\kappa_{\mathrm{speed}}\), packed MLP, CUDA-graph decode.
-
-Code added 2026-07-25:
-- `svd_spectralite.py`: `latency_gate` / `kappa_speed` on allocate path  
-- `phase9.py`, `phase10.py`  
-- `config.config_for_model()` presets  
-- Notebook cells Phase 9 & 10 in `works.ipynb`
+1. OPT-1.3B zero-shot (ActSVD+gate ± Spec-ρ+gate) — optional second pass  
+2. LLaMA-3.2-1B (HF token) with memory-lean Phase-10 recipe  
+3. Runtime: packed MLP / CUDA-graph decode if still ≤1× vs dense  
+4. Keep paper tables updated in `latex_code.tex` (local)
 
 ---
 
 ## 5. Paper decisions
 
-IEEE journal (`IEEEtran`). Related Work = user’s 22-paper survey (verbatim).  
-`latex_code.tex` is **gitignored**. Future Work already lists Spec-ρ+gate and larger models.
+IEEE journal (`IEEEtran`). Related Work = 22-paper survey (verbatim).  
+`latex_code.tex` is **gitignored**.
 
 ---
 
 ## 6. Workflow notes
 
-- Colab: open notebooks via GitHub  
-- Phase cells: fetch/reset → deps → load → run → `results/`  
-- After Phase 9/10: commit results from Cursor or Colab  
+- Phase 10 RAM: never use 50k tokens/layer on 1.3B (OOM); use ≤4096  
 - Default protect: **`rho`**  
-- Dense peak MFU notes: A100 FP16 Tensor Core 312 TFLOPS  
+- Commits as PrabinDevkota (not Cursor Agent)  
 
 ---
 

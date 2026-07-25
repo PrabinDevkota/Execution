@@ -1,0 +1,20 @@
+{
+  "model_name": "facebook/opt-1.3b",
+  "dense_c4": 18.038774490356445,
+  "dense_decode_ms": 14.039106750488282,
+  "max_tokens_per_layer": 4096,
+  "calib_num_sequences": 16,
+  "calib_seq_len": 256,
+  "actsvd_r0.50_c4": 88.06867980957031,
+  "actsvd_r0.50_decode_ms": 20.268208694458007,
+  "actsvd_r0.50_decode_speedup": 0.6926663802473592,
+  "actsvd_gate_r0.50_c4": 80.50908660888672,
+  "actsvd_gate_r0.50_decode_ms": 16.32408561706543,
+  "actsvd_gate_r0.50_decode_speedup": 0.8600240821949379,
+  "spectralite_rho_k0.75_c4": 96.69911193847656,
+  "spectralite_rho_k0.75_decode_ms": 20.03739013671875,
+  "spectralite_rho_k0.75_decode_speedup": 0.7006454760174309,
+  "spectralite_rho_gate_k0.75_c4": 89.93896484375,
+  "spectralite_rho_gate_k0.75_decode_ms": 19.109263610839843,
+  "spectralite_rho_gate_k0.75_decode_speedup": 0.7346754451869362
+}
