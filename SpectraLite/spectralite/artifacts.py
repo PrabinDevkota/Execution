@@ -169,7 +169,7 @@ def print_progress_dashboard(config: Optional[Config] = None) -> dict[str, Any]:
     print_kv("Status file", str(status_path(config)))
     print_kv("Updated at", status.get("updated_at") or "never")
     phases = status.get("phases", {})
-    planned = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
+    planned = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
     for p in planned:
         entry = phases.get(p, {})
         done = bool(entry.get("complete"))

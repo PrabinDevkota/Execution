@@ -9,10 +9,9 @@ weights (effective rank / normalized spectral entropy) under a global FLOP budge
 optional sensitivity/stability modules and a hardware latency-feasibility gate so theoretical
 FLOP reductions can convert to measured wall-clock gains.
 
-> **Current status (OPT-125M, Phases 0–8 complete):** whitening, ActSVD, SpectraLite-ρ,
-> latency gate, ablations, and lm-eval zero-shot are in `results/`. Next: SpectraLite-ρ+gate,
-> then LLaMA-3.2-1B / OPT-1.3B. See `CHAT_HISTORY.md` for the progress record.
-> Primary Colab notebook: `notebooks/works.ipynb`.
+> **Current status:** OPT-125M Phases 0–8 complete in `results/`. **Next stages wired:**
+> Phase 9 (SpectraLite-ρ + latency gate on OPT-125M) and Phase 10 (OPT-1.3B scale ladder)
+> in `notebooks/works.ipynb`. See `CHAT_HISTORY.md`.
 
 ---
 
@@ -111,6 +110,8 @@ Larger models (OPT-1.3B, Pythia, LLaMA-3.2-1B) belong to later phases.
 | 6     | Latency gate + factor fusion + CUDA-graph decode   |
 | 7     | Ablations                                          |
 | 8     | Full lm-eval / paper tables                        |
+| 9     | SpectraLite-ρ + latency gate (deploy default)      |
+| 10    | Scale ladder: OPT-1.3B (then LLaMA-3.2-1B)          |
 
 ---
 

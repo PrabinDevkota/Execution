@@ -1,6 +1,6 @@
 # SpectraLite — Chat / Progress Record
 
-Last updated: 2026-07-13 (IST)
+Last updated: 2026-07-25 (IST)
 
 **GitHub (public):** https://github.com/PrabinDevkota/Execution  
 **Project path in repo:** `SpectraLite/`  
@@ -8,7 +8,7 @@ Last updated: 2026-07-13 (IST)
 
 Dev model: `facebook/opt-125m` · Hardware: Colab NVIDIA A100  
 Primary notebook: `notebooks/works.ipynb`  
-Paper draft (local, gitignored): `latex_code.tex` — **IEEE journal** class (`\documentclass[journal]{IEEEtran}`), with datasets section and Phase 0–8 results.
+Paper draft (local, gitignored): `latex_code.tex` — IEEE journal class; Phases 0–8 results.
 
 This file records decisions and outcomes from Cursor chat sessions so work can resume without re-deriving context.
 
@@ -24,27 +24,20 @@ Core ideas:
 3. **Latency feasibility gate**: compress only if \(r < \kappa_{\mathrm{speed}} \cdot mn/(m+n)\)  
 4. Optional stability modules (Ledoit–Wolf, \(\kappa\)) — studied; ridge preferred on OPT-125M  
 
-Flagship later: LLaMA-3.2-1B (not run yet).
+Flagship later: LLaMA-3.2-1B (after OPT-1.3B).
 
 ---
 
-## 2. Phase status (0–8 complete)
+## 2. Phase status
 
 | Phase | What | Status | Headline |
 |------|------|--------|----------|
-| 0 | Smoke / load OPT-125M | Done | 125.2M params, 73 Linears, A100 OK |
-| 1 | Dense baselines | Done | C4 ≈28.7, WT2 ≈44, prefill ≈7.3 ms, decode ≈7.2 ms/tok |
-| 2 | Vanilla SVD | Done | C4 922 / 2953 / 6256 at r=0.5/0.4/0.3 — motivating negative |
-| 3 | ActSVD (ridge whitening) | Done | C4 123 / 555 / 2287 — whitening is necessary |
-| 4 | SpectraLite-ρ | Done | C4 141 / 757 / 2501; WT2 82.8 beats ActSVD 87.4 at keep 0.75 |
-| 5 | LW + κ stability | Done | LW hurt ActSVD (C4 1472); κ mostly idle |
-| 6 | Latency gate | Done | **Dual win**: decode 10.1→8.3 ms, C4 123→111 (48 attn dense, 24 MLP compressed) |
-| 7 | Ablations | Done | Whitening, gate, MLP, ρ-only good; full/sr protect collapse; calib 16≈32 |
-| 8 | Zero-shot lm-eval | Done | Gated best compressed (38.3%, 91.7% of dense); Spec-ρ 37.5% > ungated 36.7% |
+| 0–8 | OPT-125M full ladder | **Done** | Gate dual/triple win; Spec-ρ competitive; zero-shot gated 38.3% |
+| **9** | Spec-ρ **+** latency gate (OPT-125M) | **Code ready — run in Colab** | Closes deploy-default gap |
+| **10** | OPT-1.3B scale ladder | **Code ready — run in Colab** | Same-family step toward absolute speedup |
+| 11+ | LLaMA-3.2-1B + runtime co-design | Planned | Packed MLP / CUDA-graph / FlashSVD handoff |
 
-Phase 8 commit on `main`: `bf1e94d` — `results/phase8_*.json` + `phase_status.json`.
-
-### Phase 8 zero-shot averages (keep ≈0.75)
+### Phase 8 zero-shot averages (keep ≈0.75) — recorded
 
 | Method | Avg | Retention vs dense |
 |--------|-----|--------------------|
@@ -52,8 +45,6 @@ Phase 8 commit on `main`: `bf1e94d` — `results/phase8_*.json` + `phase_status.
 | ActSVD gated | **38.3%** | **91.7%** |
 | SpectraLite-ρ | 37.5% | 89.7% |
 | ActSVD ungated | 36.7% | 87.8% |
-
-BoolQ: ungated 41.5% → gated 50.2% / Spec-ρ 49.8%.
 
 ---
 
@@ -69,65 +60,41 @@ Supporting pillars:
 
 ---
 
-## 4. Paper decisions (this chat)
+## 4. Next-stage plan (active)
 
-IEEE conference format (`IEEEtran`).
+1. **Phase 9 (OPT-125M):** run `works.ipynb` Phase 9 cell → Spec-ρ ± gate vs ActSVD ± gate + Spec-ρ+gate zero-shot → commit `results/phase9_*`.  
+2. **Phase 10 (OPT-1.3B):** run Phase 10 cell (loads `facebook/opt-1.3b`) → dense / ActSVD / Spec-ρ ± gate + zero-shot → commit `results/phase10_*`.  
+3. **Then:** LLaMA-3.2-1B (HF token), update `latex_code.tex` tables in place.  
+4. **If still ≤1× vs dense:** stricter \(\kappa_{\mathrm{speed}}\), packed MLP, CUDA-graph decode.
 
-Section order:
-1. Abstract  
-2. Introduction (novelty + Phase 0–8 scope)  
-3. **Related Work** = user’s 22-paper literature survey (**kept verbatim**; only section title renamed from “Literature Survey”)  
-4. Method  
-5. Experimental Setup (incl. phased Colab protocol)  
-6. Results (Phases 2–8 tables)  
-7. Discussion  
-8. Conclusion  
-9. Future Work  
-10. Bibliography `ref1`–`ref22` (user’s keys, unchanged)
-
-User instruction: **do not rewrite/remove the literature survey**; put SpectraLite content around it.
-
-`latex_code.tex` is **gitignored** (local draft until ready to publish).
+Code added 2026-07-25:
+- `svd_spectralite.py`: `latency_gate` / `kappa_speed` on allocate path  
+- `phase9.py`, `phase10.py`  
+- `config.config_for_model()` presets  
+- Notebook cells Phase 9 & 10 in `works.ipynb`
 
 ---
 
-## 5. Workflow notes (operational)
+## 5. Paper decisions
 
-- Colab: open notebooks via GitHub, not Files double-click  
-- Each phase cell: fetch/reset → deps → load model → run → write `results/`  
-- Model weights not in git; metrics JSON/CSV are  
-- Prefer Cursor commit/push for `results/` (Colab push often fails)  
-- WikiText HF id: `Salesforce/wikitext`  
-- ActSVD SVD on CPU when weight/cov devices differ  
-- Default protect after Phase 7: **`rho`** (not `full`)  
-- Dense peak for MFU notes: A100 FP16 Tensor Core 312 TFLOPS  
+IEEE journal (`IEEEtran`). Related Work = user’s 22-paper survey (verbatim).  
+`latex_code.tex` is **gitignored**. Future Work already lists Spec-ρ+gate and larger models.
 
 ---
 
-## 6. Future stages (explicitly left open)
+## 6. Workflow notes
 
-1. SpectraLite-ρ **+ latency gate** as default deployed config  
-2. LLaMA-3.2-1B (absolute speedup headroom)  
-3. Runtime co-design: packed MLP, CUDA-graph decode, FlashSVD handoff  
-4. Broader eval / few-shot / longer prefill / optional SVD+quant  
-5. Revisit LW/κ at larger scale  
+- Colab: open notebooks via GitHub  
+- Phase cells: fetch/reset → deps → load → run → `results/`  
+- After Phase 9/10: commit results from Cursor or Colab  
+- Default protect: **`rho`**  
+- Dense peak MFU notes: A100 FP16 Tensor Core 312 TFLOPS  
 
 ---
 
 ## 7. Key code modules
 
-`spectralite/config.py`, `calibration.py`, `whitening.py`, `svd_vanilla.py`, `svd_activation.py`, `svd_spectralite.py`, `spectral.py`, `rank_alloc.py`, `latency_gate.py`, `stability.py`, `downstream.py`, `phase2.py`–`phase8.py`, `phase_runner.py`, `lowrank.py`
-
----
-
-## 8. Chat sessions covered by this record
-
-- SpectraLite implementation Phases 0–8 (prior + this thread)  
-- Paper drafting in IEEE format with preserved literature survey  
-- Phase 8 analysis integrated into paper; results pushed (`bf1e94d`)  
-- Agreed main highlight: latency gate dual/triple win  
-
-Agent transcript (Cursor): `agent-transcripts/b9b00821-1c73-4194-9ab5-112ace42a6aa`
+`spectralite/config.py`, `calibration.py`, `whitening.py`, `svd_vanilla.py`, `svd_activation.py`, `svd_spectralite.py`, `spectral.py`, `rank_alloc.py`, `latency_gate.py`, `stability.py`, `downstream.py`, `phase2.py`–`phase10.py`, `phase_runner.py`, `lowrank.py`
 
 ---
 

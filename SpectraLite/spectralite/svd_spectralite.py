@@ -180,12 +180,21 @@ def apply_spectralite_ranks(
     *,
     clone: bool = True,
     kappa_max: Optional[float] = None,
+    latency_gate: bool = False,
+    kappa_speed: float = 1.0,
 ) -> dict[str, Any]:
-    """Replace Linears using cached whitened SVD truncated to ``ranks[name]``."""
+    """Replace Linears using cached whitened SVD truncated to ``ranks[name]``.
+
+    When ``latency_gate=True``, layers with ``r ≥ κ_speed·mn/(m+n)`` stay dense
+    (same feasibility rule as Phase-6 ActSVD gating).
+    """
+    from spectralite.latency_gate import gate_decision
+
     target = copy.deepcopy(model) if clone else model
     target.eval()
 
     replacements: list[dict[str, Any]] = []
+    gated_dense: list[dict[str, Any]] = []
     dense_params = 0
     lowrank_params = 0
     skipped: list[str] = []
@@ -200,14 +209,44 @@ def apply_spectralite_ranks(
             skipped.append(name)
             continue
 
+        m, n = int(entry["out_features"]), int(entry["in_features"])
+        dense_n = linear.weight.numel() + (linear.bias.numel() if linear.bias is not None else 0)
         rank = int(ranks[name])
+        decision = gate_decision(n, m, rank, kappa_speed=kappa_speed)
+
+        if latency_gate and not decision["passes_gate"]:
+            gated_dense.append({"name": name, **decision, "dense_params": dense_n})
+            dense_params += dense_n
+            lowrank_params += dense_n
+            logger.info(
+                "SpectraLite latency-gate KEEP DENSE %s: r=%d ≥ thresh=%.1f (κ=%.2f)",
+                name,
+                rank,
+                decision["latency_threshold"],
+                kappa_speed,
+            )
+            continue
+
         u_hat, v_hat, stab = _factors_from_cache(entry, rank, kappa_max=kappa_max)
         rank = int(stab["rank"])
+        if latency_gate:
+            decision = gate_decision(n, m, rank, kappa_speed=kappa_speed)
+            if not decision["passes_gate"]:
+                gated_dense.append(
+                    {
+                        "name": name,
+                        **decision,
+                        "dense_params": dense_n,
+                        "note": "failed_gate_after_kappa_bump",
+                    }
+                )
+                dense_params += dense_n
+                lowrank_params += dense_n
+                continue
+
         lr = lowrank_from_factors(linear, u_hat, v_hat)
         set_module_by_name(target, name, lr)
 
-        m, n = int(entry["out_features"]), int(entry["in_features"])
-        dense_n = linear.weight.numel() + (linear.bias.numel() if linear.bias is not None else 0)
         lr_n = lr.param_count
         dense_params += dense_n
         lowrank_params += lr_n
@@ -227,6 +266,9 @@ def apply_spectralite_ranks(
                 "kappa_trunc": stab["kappa_trunc"],
                 "kappa_bumped": stab["kappa_bumped"],
                 "recon_rel_error": stab["recon_rel_error"],
+                "latency_gate": latency_gate,
+                "kappa_speed": kappa_speed,
+                "latency_threshold": decision["latency_threshold"],
                 "flop_break_even": be,
                 "below_break_even": rank < be,
                 "dense_params": dense_n,
@@ -250,9 +292,13 @@ def apply_spectralite_ranks(
     summary = {
         "method": "spectralite_spectral_alloc",
         "kappa_max": kappa_max,
+        "latency_gate": latency_gate,
+        "kappa_speed": kappa_speed,
         "num_replaced": len(replacements),
+        "num_gated_dense": len(gated_dense),
         "num_skipped": len(skipped),
         "skipped": skipped,
+        "gated_dense": gated_dense,
         "dense_params_touched": dense_params,
         "lowrank_params_touched": lowrank_params,
         "params_saved_touched": dense_params - lowrank_params,
@@ -260,6 +306,8 @@ def apply_spectralite_ranks(
         "replacements": replacements,
         "mean_recon_rel_error": (
             sum(r["recon_rel_error"] for r in replacements) / max(len(replacements), 1)
+            if replacements
+            else float("nan")
         ),
         "num_kappa_bumped": sum(1 for r in replacements if r.get("kappa_bumped")),
     }
@@ -274,15 +322,24 @@ def allocate_and_compress(
     clone: bool = True,
     kappa_max: Optional[float] = None,
     protect_mode: str = "rho",
+    latency_gate: bool = False,
+    kappa_speed: float = 1.0,
 ) -> dict[str, Any]:
     """Allocate ranks under ``target_keep_ratio`` and build compressed model.
 
     Default protect is ``rho`` (effective-rank only).
+    Set ``latency_gate=True`` to refuse break-even factorizations after allocation.
     """
     metas = cache_to_alloc_metas(cache, protect_mode=protect_mode)
     alloc = allocate_ranks_for_budget(metas, target_keep_ratio)
     packed = apply_spectralite_ranks(
-        model, cache, alloc["ranks"], clone=clone, kappa_max=kappa_max
+        model,
+        cache,
+        alloc["ranks"],
+        clone=clone,
+        kappa_max=kappa_max,
+        latency_gate=latency_gate,
+        kappa_speed=kappa_speed,
     )
     packed["allocation"] = alloc
     packed["allocation_rows"] = allocation_table(metas, alloc["ranks"])
@@ -303,6 +360,9 @@ def print_spectralite_summary(summary: dict[str, Any], allocation: Optional[dict
         print_kv("Achieved keep", f"{allocation['achieved_keep_ratio']:.4f}")
         print_kv("Lambda", f"{allocation['lambda']:.6f}")
     print_kv("Layers replaced", summary["num_replaced"])
+    if summary.get("latency_gate"):
+        print_kv("Gated dense (kept)", summary.get("num_gated_dense", 0))
+        print_kv("κ_speed", summary.get("kappa_speed"))
     print_kv("Dense params (touched)", f"{summary['dense_params_touched']:,}")
     print_kv("Low-rank params (touched)", f"{summary['lowrank_params_touched']:,}")
     print_kv("Keep ratio (touched)", f"{summary['param_keep_ratio_touched']:.4f}")

@@ -89,6 +89,52 @@ def default_config() -> Config:
     return Config()
 
 
+# Model presets for the Phase-10+ scale ladder (override keep defaults light).
+MODEL_PRESETS: dict[str, dict[str, object]] = {
+    "facebook/opt-125m": {
+        "calib_num_sequences": 32,
+        "calib_seq_len": 512,
+        "calib_batch_size": 2,
+        "ppl_max_tokens": 50_000,
+        "latency_reps_prefill": 50,
+        "latency_reps_decode": 30,
+    },
+    "facebook/opt-1.3b": {
+        "calib_num_sequences": 32,
+        "calib_seq_len": 512,
+        "calib_batch_size": 1,
+        "ppl_max_tokens": 30_000,
+        "latency_reps_prefill": 20,
+        "latency_reps_decode": 15,
+        "latency_prompt_len": 128,
+        "latency_gen_tokens": 64,
+    },
+    "meta-llama/Llama-3.2-1B": {
+        "calib_num_sequences": 32,
+        "calib_seq_len": 512,
+        "calib_batch_size": 1,
+        "ppl_max_tokens": 30_000,
+        "latency_reps_prefill": 20,
+        "latency_reps_decode": 15,
+        "trust_remote_code": False,
+    },
+}
+
+
+def config_for_model(model_name: str, **overrides: object) -> Config:
+    """Build a :class:`Config` for ``model_name`` using known presets."""
+    cfg = default_config()
+    cfg.model_name = model_name
+    preset = MODEL_PRESETS.get(model_name, {})
+    for key, value in preset.items():
+        if hasattr(cfg, key):
+            setattr(cfg, key, value)
+    for key, value in overrides.items():
+        if hasattr(cfg, key):
+            setattr(cfg, key, value)
+    return cfg
+
+
 # Module-level convenience aliases (imported by notebooks / scripts).
 MODEL_NAME: str = Config.model_name
 DEVICE: str = "cuda"  # resolved at runtime; prefer system.resolve_device()
