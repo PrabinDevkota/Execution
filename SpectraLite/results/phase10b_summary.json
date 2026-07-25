@@ -1,0 +1,367 @@
+{
+  "phase": "10b",
+  "model_name": "facebook/opt-1.3b",
+  "keep_ratio": 0.75,
+  "rank_ratio": 0.5,
+  "kappa_speed": 1.0,
+  "tasks": [
+    "piqa",
+    "arc_easy",
+    "arc_challenge",
+    "hellaswag",
+    "winogrande",
+    "boolq",
+    "openbookqa"
+  ],
+  "batch_size": 2,
+  "limit": null,
+  "rows": [
+    {
+      "method": "dense",
+      "tasks": [
+        "piqa",
+        "arc_easy",
+        "arc_challenge",
+        "hellaswag",
+        "winogrande",
+        "boolq",
+        "openbookqa"
+      ],
+      "num_fewshot": 0,
+      "batch_size": 2,
+      "limit": null,
+      "per_task": {
+        "piqa": {
+          "acc": 0.7100108813928183,
+          "raw": {
+            "name": "piqa",
+            "alias": "piqa",
+            "sample_len": 1838,
+            "acc,none": 0.7100108813928183,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.7100108813928183,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_easy": {
+          "acc": 0.5126262626262627,
+          "raw": {
+            "name": "arc_easy",
+            "alias": "arc_easy",
+            "sample_len": 2376,
+            "acc,none": 0.5673400673400674,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.5126262626262627,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_challenge": {
+          "acc": 0.2781569965870307,
+          "raw": {
+            "name": "arc_challenge",
+            "alias": "arc_challenge",
+            "sample_len": 1172,
+            "acc,none": 0.24488054607508533,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.2781569965870307,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "hellaswag": {
+          "acc": 0.5373431587333201,
+          "raw": {
+            "name": "hellaswag",
+            "alias": "hellaswag",
+            "sample_len": 10042,
+            "acc,none": 0.4137621987651862,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.5373431587333201,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "winogrande": {
+          "acc": 0.5943172849250198,
+          "raw": {
+            "name": "winogrande",
+            "alias": "winogrande",
+            "sample_len": 1267,
+            "acc,none": 0.5943172849250198,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "boolq": {
+          "acc": 0.57217125382263,
+          "raw": {
+            "name": "boolq",
+            "alias": "boolq",
+            "sample_len": 3270,
+            "acc,none": 0.57217125382263,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "openbookqa": {
+          "acc": 0.326,
+          "raw": {
+            "name": "openbookqa",
+            "alias": "openbookqa",
+            "sample_len": 500,
+            "acc,none": 0.24,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.326,
+            "acc_norm_stderr,none": "N/A"
+          }
+        }
+      },
+      "zero_shot_avg": 0.504375119726726,
+      "notes": "Phase 10b dense facebook/opt-1.3b"
+    },
+    {
+      "method": "actsvd_gate_r0.50",
+      "tasks": [
+        "piqa",
+        "arc_easy",
+        "arc_challenge",
+        "hellaswag",
+        "winogrande",
+        "boolq",
+        "openbookqa"
+      ],
+      "num_fewshot": 0,
+      "batch_size": 2,
+      "limit": null,
+      "per_task": {
+        "piqa": {
+          "acc": 0.6153427638737758,
+          "raw": {
+            "name": "piqa",
+            "alias": "piqa",
+            "sample_len": 1838,
+            "acc,none": 0.6077257889009793,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.6153427638737758,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_easy": {
+          "acc": 0.4053030303030303,
+          "raw": {
+            "name": "arc_easy",
+            "alias": "arc_easy",
+            "sample_len": 2376,
+            "acc,none": 0.43476430976430974,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.4053030303030303,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_challenge": {
+          "acc": 0.26535836177474403,
+          "raw": {
+            "name": "arc_challenge",
+            "alias": "arc_challenge",
+            "sample_len": 1172,
+            "acc,none": 0.21245733788395904,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.26535836177474403,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "hellaswag": {
+          "acc": 0.3888667596096395,
+          "raw": {
+            "name": "hellaswag",
+            "alias": "hellaswag",
+            "sample_len": 10042,
+            "acc,none": 0.32204740091615214,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.3888667596096395,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "winogrande": {
+          "acc": 0.5382794001578532,
+          "raw": {
+            "name": "winogrande",
+            "alias": "winogrande",
+            "sample_len": 1267,
+            "acc,none": 0.5382794001578532,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "boolq": {
+          "acc": 0.6110091743119266,
+          "raw": {
+            "name": "boolq",
+            "alias": "boolq",
+            "sample_len": 3270,
+            "acc,none": 0.6110091743119266,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "openbookqa": {
+          "acc": 0.288,
+          "raw": {
+            "name": "openbookqa",
+            "alias": "openbookqa",
+            "sample_len": 500,
+            "acc,none": 0.176,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.288,
+            "acc_norm_stderr,none": "N/A"
+          }
+        }
+      },
+      "zero_shot_avg": 0.4445942128615671,
+      "notes": "Phase 10b ActSVD+gate ratio=0.5 kappa_speed=1.0 replaced=48 gated_dense=96"
+    },
+    {
+      "method": "spectralite_rho_gate_k0.75",
+      "tasks": [
+        "piqa",
+        "arc_easy",
+        "arc_challenge",
+        "hellaswag",
+        "winogrande",
+        "boolq",
+        "openbookqa"
+      ],
+      "num_fewshot": 0,
+      "batch_size": 2,
+      "limit": null,
+      "per_task": {
+        "piqa": {
+          "acc": 0.6039173014145811,
+          "raw": {
+            "name": "piqa",
+            "alias": "piqa",
+            "sample_len": 1838,
+            "acc,none": 0.5973884657236126,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.6039173014145811,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_easy": {
+          "acc": 0.3851010101010101,
+          "raw": {
+            "name": "arc_easy",
+            "alias": "arc_easy",
+            "sample_len": 2376,
+            "acc,none": 0.4196127946127946,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.3851010101010101,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "arc_challenge": {
+          "acc": 0.2380546075085324,
+          "raw": {
+            "name": "arc_challenge",
+            "alias": "arc_challenge",
+            "sample_len": 1172,
+            "acc,none": 0.20392491467576793,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.2380546075085324,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "hellaswag": {
+          "acc": 0.3456482772356104,
+          "raw": {
+            "name": "hellaswag",
+            "alias": "hellaswag",
+            "sample_len": 10042,
+            "acc,none": 0.30302728540131446,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.3456482772356104,
+            "acc_norm_stderr,none": "N/A"
+          }
+        },
+        "winogrande": {
+          "acc": 0.5043409629044988,
+          "raw": {
+            "name": "winogrande",
+            "alias": "winogrande",
+            "sample_len": 1267,
+            "acc,none": 0.5043409629044988,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "boolq": {
+          "acc": 0.46085626911314986,
+          "raw": {
+            "name": "boolq",
+            "alias": "boolq",
+            "sample_len": 3270,
+            "acc,none": 0.46085626911314986,
+            "acc_stderr,none": "N/A"
+          }
+        },
+        "openbookqa": {
+          "acc": 0.286,
+          "raw": {
+            "name": "openbookqa",
+            "alias": "openbookqa",
+            "sample_len": 500,
+            "acc,none": 0.16,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.286,
+            "acc_norm_stderr,none": "N/A"
+          }
+        }
+      },
+      "zero_shot_avg": 0.4034169183253404,
+      "notes": "Phase 10b Spec-ρ+gate keep=0.75 kappa_speed=1.0 replaced=113 gated_dense=31"
+    }
+  ],
+  "table": [
+    {
+      "method": "dense",
+      "zero_shot_avg": 0.504375119726726,
+      "piqa": 0.7100108813928183,
+      "arc_easy": 0.5126262626262627,
+      "arc_challenge": 0.2781569965870307,
+      "hellaswag": 0.5373431587333201,
+      "winogrande": 0.5943172849250198,
+      "boolq": 0.57217125382263,
+      "openbookqa": 0.326
+    },
+    {
+      "method": "actsvd_gate_r0.50",
+      "zero_shot_avg": 0.4445942128615671,
+      "piqa": 0.6153427638737758,
+      "arc_easy": 0.4053030303030303,
+      "arc_challenge": 0.26535836177474403,
+      "hellaswag": 0.3888667596096395,
+      "winogrande": 0.5382794001578532,
+      "boolq": 0.6110091743119266,
+      "openbookqa": 0.288
+    },
+    {
+      "method": "spectralite_rho_gate_k0.75",
+      "zero_shot_avg": 0.4034169183253404,
+      "piqa": 0.6039173014145811,
+      "arc_easy": 0.3851010101010101,
+      "arc_challenge": 0.2380546075085324,
+      "hellaswag": 0.3456482772356104,
+      "winogrande": 0.5043409629044988,
+      "boolq": 0.46085626911314986,
+      "openbookqa": 0.286
+    }
+  ],
+  "claim": {
+    "model_name": "facebook/opt-1.3b",
+    "tasks": [
+      "piqa",
+      "arc_easy",
+      "arc_challenge",
+      "hellaswag",
+      "winogrande",
+      "boolq",
+      "openbookqa"
+    ],
+    "dense_zero_shot_avg": 0.504375119726726,
+    "actsvd_gate_r0.50_zero_shot_avg": 0.4445942128615671,
+    "spectralite_rho_gate_k0.75_zero_shot_avg": 0.4034169183253404
+  }
+}

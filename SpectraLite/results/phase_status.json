@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-25T11:21:34Z",
+  "updated_at": "2026-07-25T15:45:39Z",
   "phases": {
     "0": {
       "complete": true,
@@ -222,6 +222,24 @@
         "max_tokens_per_layer": 4096
       },
       "notes": "Memory-lean scale ladder on facebook/opt-1.3b: max_tokens/layer=4096, float32 cache, zero_shot deferred by default."
+    },
+    "10b": {
+      "complete": true,
+      "completed_at": "2026-07-25T15:45:39Z",
+      "artifacts": {
+        "summary": "results/phase10b_summary.json",
+        "table": "results/phase10b_table.json",
+        "claim": "results/phase10b_claim.json",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "model_name": "facebook/opt-1.3b",
+        "num_methods": 3,
+        "best_method": "dense",
+        "best_zero_shot_avg": 0.504375119726726,
+        "dense_avg": 0.504375119726726
+      },
+      "notes": "OPT-1.3B zero-shot only (dense / ActSVD+gate / Spec-ρ+gate) at keep≈0.75; complements Phase 10 PPL/latency."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."
