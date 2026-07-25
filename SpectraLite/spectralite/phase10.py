@@ -1,7 +1,8 @@
-"""Phase 10: scale SpectraLite to OPT-1.3B (same-family ladder step)."""
+"""Phase 10: scale SpectraLite to OPT-1.3B (memory-lean Colab path)."""
 
 from __future__ import annotations
 
+import gc
 from typing import Any, Optional, Sequence
 
 import torch
@@ -9,7 +10,7 @@ import torch
 from spectralite.artifacts import mark_phase_complete, print_git_save_instructions, write_json
 from spectralite.benchmark import run_phase1_dense_baseline
 from spectralite.calibration import load_wikitext2_calibration_batches
-from spectralite.config import Config, config_for_model, default_config
+from spectralite.config import Config, config_for_model
 from spectralite.downstream import DEFAULT_ZERO_SHOT_TASKS, run_lm_eval
 from spectralite.model_loader import load_model_and_tokenizer
 from spectralite.svd_activation import apply_activation_aware_svd, print_actsvd_summary
@@ -26,9 +27,14 @@ logger = get_logger(__name__)
 DEFAULT_MODEL = "facebook/opt-1.3b"
 
 
-def _empty_cache() -> None:
+def _free() -> None:
+    gc.collect()
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+        try:
+            torch.cuda.ipc_collect()
+        except Exception:  # noqa: BLE001
+            pass
 
 
 def _speedups(row: dict[str, Any], dense_row: dict[str, Any]) -> dict[str, float]:
@@ -91,37 +97,43 @@ def run_phase10_opt13b_ladder(
     calib_num_sequences: Optional[int] = None,
     calib_seq_len: Optional[int] = None,
     calib_batch_size: Optional[int] = None,
+    max_tokens_per_layer: int = 4096,
     ridge: Optional[float] = None,
     ppl_seq_len: Optional[int] = None,
     ppl_max_tokens: Optional[int] = None,
-    latency_reps_prefill: int = 20,
-    latency_reps_decode: int = 15,
-    run_zero_shot: bool = True,
+    latency_reps_prefill: int = 15,
+    latency_reps_decode: int = 10,
+    run_zero_shot: bool = False,
     zero_shot_tasks: Sequence[str] = DEFAULT_ZERO_SHOT_TASKS,
-    zero_shot_batch_size: int | str = 4,
+    zero_shot_batch_size: int | str = 2,
     zero_shot_limit: Optional[int | float] = None,
     csv_name: str = "phase10_opt13b.csv",
 ) -> dict[str, Any]:
     """Dense → ActSVD → ActSVD+gate → Spec-ρ → Spec-ρ+gate on OPT-1.3B.
 
-    Loads the model if ``dense_model`` / ``tokenizer`` are not provided.
-    Writes model-scoped artifacts under ``results/`` (phase10_*).
+    Memory-lean defaults for Colab system RAM:
+    - ``max_tokens_per_layer=4096`` (was 50k — the OOM cause on 8192-d MLP inputs)
+    - float32 SVD cache, no stored dense ``W``
+    - activations freed before Spec-ρ; one compressed clone at a time
+    - ``run_zero_shot=False`` by default (enable in a second pass if needed)
     """
     cfg = config or config_for_model(model_name)
     cfg.model_name = model_name
     cfg.ensure_directories()
     set_seed(cfg.seed)
 
-    calib_num_sequences = calib_num_sequences or cfg.calib_num_sequences
-    calib_seq_len = calib_seq_len or min(cfg.calib_seq_len, 512)
-    calib_batch_size = calib_batch_size or cfg.calib_batch_size
+    calib_num_sequences = calib_num_sequences or min(int(cfg.calib_num_sequences), 16)
+    calib_seq_len = calib_seq_len or min(int(cfg.calib_seq_len), 256)
+    calib_batch_size = calib_batch_size or 1
     ridge = cfg.whitening_ridge if ridge is None else ridge
-    ppl_seq_len = ppl_seq_len or min(cfg.ppl_seq_len, 512)
-    ppl_max_tokens = ppl_max_tokens or min(cfg.ppl_max_tokens, 30_000)
+    ppl_seq_len = ppl_seq_len or min(int(cfg.ppl_seq_len), 256)
+    ppl_max_tokens = ppl_max_tokens or min(int(cfg.ppl_max_tokens), 15_000)
 
     if dense_model is None or tokenizer is None:
         print_section(f"Phase 10 — Load {model_name}")
         dense_model, tokenizer = load_model_and_tokenizer(config=cfg)
+    dense_model.eval()
+    _free()
 
     print_section(f"Phase 10 — Dense baseline ({model_name})")
     dense_metrics = _profile(
@@ -138,8 +150,13 @@ def run_phase10_opt13b_ladder(
         latency_reps_decode=latency_reps_decode,
     )
     dense_row = dense_metrics["row"]
+    del dense_metrics
+    _free()
 
-    print_section("Phase 10 — Calibration + spectra")
+    print_section(
+        f"Phase 10 — Calibration (seqs={calib_num_sequences}, "
+        f"len={calib_seq_len}, max_tok/layer={max_tokens_per_layer})"
+    )
     batches = load_wikitext2_calibration_batches(
         tokenizer,
         num_sequences=calib_num_sequences,
@@ -147,15 +164,18 @@ def run_phase10_opt13b_ladder(
         batch_size=calib_batch_size,
         seed=cfg.seed,
     )
-    activations = collect_linear_input_activations(dense_model, batches)
-    cache = build_whitened_svd_cache(
-        dense_model, activations, ridge=ridge, cov_method="ridge"
+    activations = collect_linear_input_activations(
+        dense_model,
+        batches,
+        max_tokens_per_layer=max_tokens_per_layer,
     )
+    del batches
+    _free()
 
     variants: dict[str, Any] = {}
 
-    def _run_actsvd(gated: bool) -> None:
-        tag = "actsvd_gate" if gated else "actsvd"
+    # --- ActSVD paths need activations; run them first, then free acts ---
+    for gated, tag in ((False, "actsvd"), (True, "actsvd_gate")):
         print_section(f"Phase 10 — {tag}")
         packed = apply_activation_aware_svd(
             dense_model,
@@ -169,18 +189,22 @@ def run_phase10_opt13b_ladder(
         )
         print_actsvd_summary(packed["summary"])
         method = f"{tag}_r{rank_ratio:.2f}"
+        compressed = packed["model"]
+        summary = packed["summary"]
+        del packed
+        _free()
         metrics = _profile(
-            packed["model"],
+            compressed,
             tokenizer,
             cfg=cfg,
             method=method,
             notes=(
                 f"{model_name} ActSVD gate={gated} kappa_speed={kappa_speed} "
-                f"replaced={packed['summary']['num_replaced']} "
-                f"gated_dense={packed['summary'].get('num_gated_dense', 0)}"
+                f"replaced={summary['num_replaced']} "
+                f"gated_dense={summary.get('num_gated_dense', 0)}"
             ),
             csv_name=csv_name,
-            analytic_keep=float(packed["summary"]["param_keep_ratio_touched"]),
+            analytic_keep=float(summary["param_keep_ratio_touched"]),
             ppl_seq_len=ppl_seq_len,
             ppl_max_tokens=ppl_max_tokens,
             latency_reps_prefill=latency_reps_prefill,
@@ -188,15 +212,27 @@ def run_phase10_opt13b_ladder(
         )
         variants[method] = {
             "row": {**metrics["row"], **_speedups(metrics["row"], dense_row)},
-            "num_replaced": packed["summary"]["num_replaced"],
-            "num_gated_dense": packed["summary"].get("num_gated_dense", 0),
-            "param_keep_ratio_touched": packed["summary"]["param_keep_ratio_touched"],
+            "num_replaced": summary["num_replaced"],
+            "num_gated_dense": summary.get("num_gated_dense", 0),
+            "param_keep_ratio_touched": summary["param_keep_ratio_touched"],
         }
-        del packed, metrics
-        _empty_cache()
+        del compressed, metrics, summary
+        _free()
 
-    def _run_spec(gated: bool) -> Any:
-        tag = "spectralite_rho_gate" if gated else "spectralite_rho"
+    print_section("Phase 10 — Build float32 spectral cache (consume activations)")
+    cache = build_whitened_svd_cache(
+        dense_model,
+        activations,
+        ridge=ridge,
+        cov_method="ridge",
+        factor_dtype=torch.float32,
+        store_weight=False,
+        consume_activations=True,
+    )
+    del activations
+    _free()
+
+    for gated, tag in ((False, "spectralite_rho"), (True, "spectralite_rho_gate")):
         print_section(f"Phase 10 — {tag}")
         packed = allocate_and_compress(
             dense_model,
@@ -209,19 +245,24 @@ def run_phase10_opt13b_ladder(
         )
         print_spectralite_summary(packed["summary"], packed["allocation"])
         method = f"{tag}_k{keep_ratio:.2f}"
+        compressed = packed["model"]
+        summary = packed["summary"]
+        alloc = packed["allocation"]
+        del packed
+        _free()
         metrics = _profile(
-            packed["model"],
+            compressed,
             tokenizer,
             cfg=cfg,
             method=method,
             notes=(
                 f"{model_name} Spec-ρ gate={gated} kappa_speed={kappa_speed} "
-                f"keep={keep_ratio} achieved={packed['summary']['param_keep_ratio_touched']:.4f} "
-                f"replaced={packed['summary']['num_replaced']} "
-                f"gated_dense={packed['summary'].get('num_gated_dense', 0)}"
+                f"keep={keep_ratio} achieved={summary['param_keep_ratio_touched']:.4f} "
+                f"replaced={summary['num_replaced']} "
+                f"gated_dense={summary.get('num_gated_dense', 0)}"
             ),
             csv_name=csv_name,
-            analytic_keep=float(packed["summary"]["param_keep_ratio_touched"]),
+            analytic_keep=float(summary["param_keep_ratio_touched"]),
             ppl_seq_len=ppl_seq_len,
             ppl_max_tokens=ppl_max_tokens,
             latency_reps_prefill=latency_reps_prefill,
@@ -229,39 +270,46 @@ def run_phase10_opt13b_ladder(
         )
         variants[method] = {
             "row": {**metrics["row"], **_speedups(metrics["row"], dense_row)},
-            "num_replaced": packed["summary"]["num_replaced"],
-            "num_gated_dense": packed["summary"].get("num_gated_dense", 0),
-            "param_keep_ratio_touched": packed["summary"]["param_keep_ratio_touched"],
-            "lambda": packed["allocation"]["lambda"],
+            "num_replaced": summary["num_replaced"],
+            "num_gated_dense": summary.get("num_gated_dense", 0),
+            "param_keep_ratio_touched": summary["param_keep_ratio_touched"],
+            "lambda": alloc["lambda"],
         }
-        model_out = packed["model"] if gated else None
-        if not gated:
-            del packed
-        del metrics
-        _empty_cache()
-        return model_out
-
-    _run_actsvd(False)
-    _run_actsvd(True)
-    _run_spec(False)
-    gated_model = _run_spec(True)
+        del compressed, metrics, summary, alloc
+        _free()
 
     zero_shot: list[dict[str, Any]] = []
     if run_zero_shot:
-        print_section("Phase 10 — Zero-shot (Spec-ρ + gate + ActSVD gate)")
-        if gated_model is None:
-            gated_model = allocate_and_compress(
-                dense_model,
-                cache,
-                float(keep_ratio),
-                clone=True,
-                protect_mode=protect_mode,
-                latency_gate=True,
-                kappa_speed=kappa_speed,
-            )["model"]
-        for method, model_eval in (
-            ("spectralite_rho_gate_k0.75", gated_model),
+        print_section("Phase 10 — Zero-shot (one model at a time)")
+        for gated, method, builder in (
+            (
+                True,
+                "spectralite_rho_gate_k0.75",
+                lambda: allocate_and_compress(
+                    dense_model,
+                    cache,
+                    float(keep_ratio),
+                    clone=True,
+                    protect_mode=protect_mode,
+                    latency_gate=True,
+                    kappa_speed=kappa_speed,
+                )["model"],
+            ),
+            (
+                True,
+                "actsvd_gate_r0.50",
+                None,  # needs fresh activations — skip if consumed
+            ),
         ):
+            if method.startswith("actsvd"):
+                logger.warning(
+                    "Skipping %s zero-shot in lean mode (activations consumed). "
+                    "Re-run with a dedicated ActSVD-only zero-shot cell if needed.",
+                    method,
+                )
+                continue
+            model_eval = builder()
+            _free()
             zs = run_lm_eval(
                 model_eval,
                 tokenizer,
@@ -274,38 +322,19 @@ def run_phase10_opt13b_ladder(
             zs["notes"] = f"Phase 10 {model_name} {method}"
             zero_shot.append(zs)
             write_json(f"phase10_zeroshot_{method}.json", zs)
-            _empty_cache()
+            del model_eval
+            _free()
 
-        # ActSVD gated zero-shot for fair comparison
-        packed_ag = apply_activation_aware_svd(
-            dense_model,
-            activations,
-            rank_ratio=rank_ratio,
-            ridge=ridge,
-            cov_method="ridge",
-            latency_gate=True,
-            kappa_speed=kappa_speed,
-            clone=True,
-        )
-        zs = run_lm_eval(
-            packed_ag["model"],
-            tokenizer,
-            tasks=zero_shot_tasks,
-            num_fewshot=0,
-            batch_size=zero_shot_batch_size,
-            limit=zero_shot_limit,
-            method="actsvd_gate_r0.50",
-        )
-        zs["notes"] = f"Phase 10 {model_name} actsvd_gate"
-        zero_shot.append(zs)
-        write_json("phase10_zeroshot_actsvd_gate_r0.50.json", zs)
-        del packed_ag, gated_model
-        _empty_cache()
+    del cache
+    _free()
 
     claim = {
         "model_name": model_name,
         "dense_c4": dense_row.get("ppl_c4"),
         "dense_decode_ms": dense_row.get("decode_ms_per_token_mean"),
+        "max_tokens_per_layer": max_tokens_per_layer,
+        "calib_num_sequences": calib_num_sequences,
+        "calib_seq_len": calib_seq_len,
     }
     for key in (
         "actsvd_r0.50",
@@ -334,6 +363,8 @@ def run_phase10_opt13b_ladder(
         "keep_ratio": keep_ratio,
         "rank_ratio": rank_ratio,
         "kappa_speed": kappa_speed,
+        "memory_lean": True,
+        "max_tokens_per_layer": max_tokens_per_layer,
         "dense_row": dense_row,
         "variants": variants,
         "claim": claim,
@@ -359,8 +390,13 @@ def run_phase10_opt13b_ladder(
             "spec_rho_gated_zero_shot_avg": claim.get(
                 "spectralite_rho_gate_k0.75_zero_shot_avg"
             ),
+            "max_tokens_per_layer": max_tokens_per_layer,
         },
-        notes=f"Scale ladder on {model_name}: dense/ActSVD/Spec-ρ ± latency gate.",
+        notes=(
+            f"Memory-lean scale ladder on {model_name}: "
+            f"max_tokens/layer={max_tokens_per_layer}, float32 cache, "
+            "zero_shot deferred by default."
+        ),
         config=cfg,
     )
     print_git_save_instructions()

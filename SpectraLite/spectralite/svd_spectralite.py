@@ -30,10 +30,15 @@ def build_whitened_svd_cache(
     ridge: float = 1e-2,
     cov_method: str = "ridge",
     suffixes: Sequence[str] = DEFAULT_COMPRESS_SUFFIXES,
+    factor_dtype: torch.dtype = torch.float32,
+    store_weight: bool = False,
+    consume_activations: bool = False,
 ) -> dict[str, dict[str, Any]]:
-    """Per-layer whitened SVD factors + spectral scores (CPU float64).
+    """Per-layer whitened SVD factors + spectral scores (CPU).
 
-    Computes once and reuses across multiple FLOP budgets.
+    Defaults to float32 factors and does **not** store full ``W`` (saves multi‑GB
+    on OPT-1.3B+). Set ``consume_activations=True`` to pop/free each activation
+    tensor after its layer is processed.
     """
     from spectralite.stability import condition_number_from_cov
 
@@ -48,7 +53,7 @@ def build_whitened_svd_cache(
         if name not in activations:
             logger.warning("No activations for %s — skip cache entry", name)
             continue
-        acts = activations[name]
+        acts = activations.pop(name) if consume_activations else activations[name]
         if acts.shape[-1] != linear.in_features:
             logger.warning(
                 "Skip %s: act dim %d != in_features %d",
@@ -56,23 +61,32 @@ def build_whitened_svd_cache(
                 acts.shape[-1],
                 linear.in_features,
             )
+            del acts
             continue
 
         m, n = int(linear.out_features), int(linear.in_features)
         cov = estimate_input_covariance(acts, ridge=ridge, method=cov_method)
+        del acts
         kappa_cov = condition_number_from_cov(cov)
-        L = cholesky_factor(cov.detach().double().cpu())
-        w = linear.weight.detach().double().cpu()
-        w_tilde = w @ L
+        L = cholesky_factor(cov.detach().double().cpu()).to(factor_dtype)
+        del cov
+        w = linear.weight.detach().to(dtype=factor_dtype, device="cpu")
+        # Cholesky solve path stays consistent: whiten in factor_dtype
+        L64 = L.double()
+        w64 = w.double()
+        w_tilde = w64 @ L64
         u, s, vh = torch.linalg.svd(w_tilde, full_matrices=False)
+        del w_tilde, w64, L64
+        u = u.to(factor_dtype).contiguous()
+        s = s.to(factor_dtype).contiguous()
+        vh = vh.to(factor_dtype).contiguous()
         metrics = spectrum_metrics(s)
 
-        cache[name] = {
+        entry: dict[str, Any] = {
             "u": u,
             "s": s,
             "vh": vh,
             "L": L,
-            "W": w,
             "in_features": n,
             "out_features": m,
             "bias": None if linear.bias is None else linear.bias.detach().cpu(),
@@ -83,6 +97,11 @@ def build_whitened_svd_cache(
             "kappa_cov": kappa_cov,
             **metrics,
         }
+        if store_weight:
+            entry["W"] = w
+        else:
+            del w
+        cache[name] = entry
         logger.info(
             "Spectrum %s: q=%d rho_eff=%.2f s=%.3f stable_rank=%.2f protect=%.4f kappa_cov=%.3g",
             name,
