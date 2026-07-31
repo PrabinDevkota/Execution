@@ -64,21 +64,32 @@ def measure_forward_flops(
     if attention_mask is not None:
         kwargs["attention_mask"] = attention_mask.to(device)
 
-    flop_counter = FlopCounterMode(display=False, depth=None)
-    with flop_counter:
-        _ = model(**kwargs)
-
-    total = int(flop_counter.get_total_flops())
-    # Module table can be large; keep a compact summary string.
+    # LLaMA GQA (and some SDPA paths) crash FlopCounterMode with
+    # "sdpa_flop_count: query/key/value shapes are incompatible".
+    # Latency/PPL do not need this counter — soft-fail instead of aborting.
     try:
-        table = flop_counter.get_table(depth=2)
-    except Exception:
-        table = ""
-    return {
-        "empirical_flops_fwd": total,
-        "empirical_gflops_fwd": total / 1e9,
-        "flop_table_preview": table[:2000] if isinstance(table, str) else str(table)[:2000],
-    }
+        flop_counter = FlopCounterMode(display=False, depth=None)
+        with flop_counter:
+            _ = model(**kwargs)
+        total = int(flop_counter.get_total_flops())
+        try:
+            table = flop_counter.get_table(depth=2)
+        except Exception:
+            table = ""
+        return {
+            "empirical_flops_fwd": total,
+            "empirical_gflops_fwd": total / 1e9,
+            "flop_table_preview": table[:2000] if isinstance(table, str) else str(table)[:2000],
+            "empirical_flops_error": None,
+        }
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("FlopCounterMode failed (skipping empirical FLOPs): %s", exc)
+        return {
+            "empirical_flops_fwd": None,
+            "empirical_gflops_fwd": None,
+            "flop_table_preview": "",
+            "empirical_flops_error": str(exc),
+        }
 
 
 def measure_calflops_decode(

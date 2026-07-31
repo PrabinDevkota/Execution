@@ -22,7 +22,7 @@ Next flagship: LLaMA-3.2-1B.
 | 9 | Spec-ρ + gate (125M) | **Done** | ActSVD+gate still best compressed |
 | 10 | OPT-1.3B PPL/latency | **Done** | Gate: decode −20%, thr +24%, C4 88→81 |
 | **10b** | OPT-1.3B zero-shot | **Done** | ActSVD+gate **44.5% (88.1% dense)**; BoolQ 61.1% > dense |
-| **11** | LLaMA-3.2-1B PPL/latency | **Code ready** | Run in Colab (HF token cell); memory-lean Phase-10 recipe |
+| **11** | LLaMA-3.2-1B PPL/latency | **Code ready** | HF token + skip FlopCounter (LLaMA GQA); memory-lean Phase-10 recipe |
 | **11b** | LLaMA-3.2-1B zero-shot | **Code ready** | Same 7 tasks; after Phase 11 |
 
 ### OPT-1.3B Phase 10b zero-shot

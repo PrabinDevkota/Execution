@@ -35,6 +35,7 @@ def run_phase1_dense_baseline(
     ppl_seq_len: int = 512,
     ppl_max_tokens: int = 50_000,
     run_calflops: bool = True,
+    run_empirical_flops: bool = True,
     run_ppl: bool = True,
     csv_name: str = "phase1_dense_baselines.csv",
     phase: str = "1",
@@ -70,10 +71,24 @@ def run_phase1_dense_baseline(
     )
     attention_mask = torch.ones_like(input_ids)
 
-    print_section("Empirical FLOPs (FlopCounterMode)")
-    flop_stats = measure_forward_flops(model, input_ids, attention_mask=attention_mask)
-    print_kv("Forward FLOPs", f"{flop_stats['empirical_flops_fwd']:,}")
-    print_kv("Forward GFLOPs", f"{flop_stats['empirical_gflops_fwd']:.4f}")
+    if run_empirical_flops:
+        print_section("Empirical FLOPs (FlopCounterMode)")
+        flop_stats = measure_forward_flops(model, input_ids, attention_mask=attention_mask)
+        if flop_stats.get("empirical_flops_error"):
+            print_kv(
+                "Forward FLOPs",
+                f"skipped ({str(flop_stats['empirical_flops_error'])[:80]})",
+            )
+        else:
+            print_kv("Forward FLOPs", f"{flop_stats['empirical_flops_fwd']:,}")
+            print_kv("Forward GFLOPs", f"{flop_stats['empirical_gflops_fwd']:.4f}")
+    else:
+        flop_stats = {
+            "empirical_flops_fwd": None,
+            "empirical_gflops_fwd": None,
+            "flop_table_preview": "",
+            "empirical_flops_error": "disabled",
+        }
 
     calflops_stats: dict[str, Any] = {
         "calflops_mflops_per_token": None,

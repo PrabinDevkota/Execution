@@ -74,9 +74,11 @@ def _profile(
         ppl_seq_len=ppl_seq_len,
         ppl_max_tokens=ppl_max_tokens,
         run_calflops=False,
+        # LLaMA GQA crashes FlopCounterMode; soft-skip inside flops.py anyway.
+        run_empirical_flops=False,
         run_ppl=True,
         csv_name=csv_name,
-        phase="10",
+        phase="11",
         method=method,
         notes=notes,
         persist_artifacts=False,
