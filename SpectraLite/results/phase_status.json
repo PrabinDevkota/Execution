@@ -1,6 +1,6 @@
 {
   "project": "SpectraLite",
-  "updated_at": "2026-07-25T15:45:39Z",
+  "updated_at": "2026-07-31T15:48:27Z",
   "phases": {
     "0": {
       "complete": true,
@@ -102,7 +102,7 @@
         "last_ppl_c4": 2500.9111328125,
         "last_prefill_ms": 10.602530161539713
       },
-      "notes": "SpectraLite ρ_eff allocation (protect_mode=rho); binary-search λ under Phase-3-matched FLOP keep ratios. Revised after Phase 7 ablations."
+      "notes": "SpectraLite \u03c1_eff allocation (protect_mode=rho); binary-search \u03bb under Phase-3-matched FLOP keep ratios. Revised after Phase 7 ablations."
     },
     "5": {
       "complete": true,
@@ -120,7 +120,7 @@
         "last_method": "spectralite_lw_k0.45",
         "last_ppl_c4": 3525.326904296875
       },
-      "notes": "Ledoit–Wolf covariance + κ truncation gate on ActSVD and SpectraLite; logs recon error / κ bumps vs Phase 3–4."
+      "notes": "Ledoit\u2013Wolf covariance + \u03ba truncation gate on ActSVD and SpectraLite; logs recon error / \u03ba bumps vs Phase 3\u20134."
     },
     "6": {
       "complete": true,
@@ -203,7 +203,7 @@
         "actsvd_gated_c4": 110.6627426147461,
         "actsvd_gated_decode_ms": 8.435747385025024
       },
-      "notes": "SpectraLite-ρ ± latency gate vs ActSVD ± gate at keep≈0.75; Spec-ρ+gate zero-shot ~37.9%."
+      "notes": "SpectraLite-\u03c1 \u00b1 latency gate vs ActSVD \u00b1 gate at keep\u22480.75; Spec-\u03c1+gate zero-shot ~37.9%."
     },
     "10": {
       "complete": true,
@@ -239,7 +239,26 @@
         "best_zero_shot_avg": 0.504375119726726,
         "dense_avg": 0.504375119726726
       },
-      "notes": "OPT-1.3B zero-shot only (dense / ActSVD+gate / Spec-ρ+gate) at keep≈0.75; complements Phase 10 PPL/latency."
+      "notes": "OPT-1.3B zero-shot only (dense / ActSVD+gate / Spec-\u03c1+gate) at keep\u22480.75; complements Phase 10 PPL/latency."
+    },
+    "11": {
+      "complete": true,
+      "completed_at": "2026-07-31T15:48:27Z",
+      "artifacts": {
+        "summary": "results/phase11_summary.json",
+        "claim": "results/phase11_claim.json",
+        "csv": "results/phase11_llama32_1b.csv",
+        "status": "results/phase_status.json"
+      },
+      "metrics": {
+        "model_name": "meta-llama/Llama-3.2-1B",
+        "actsvd_gated_c4": 1322.273193359375,
+        "actsvd_gated_decode_speedup": 0.8581499648912249,
+        "spec_rho_gated_c4": 677.7188720703125,
+        "spec_rho_gated_decode_speedup": 0.8199448793404726,
+        "max_tokens_per_layer": 4096
+      },
+      "notes": "LLaMA-3.2-1B PPL/latency ladder complete; zero-shot deferred to Phase 11b."
     }
   },
   "note": "Updated automatically when phases complete. Commit this file to git after each phase."

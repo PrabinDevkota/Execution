@@ -1,0 +1,20 @@
+{
+  "model_name": "meta-llama/Llama-3.2-1B",
+  "dense_c4": 15.07514762878418,
+  "dense_decode_ms": 16.625595092773438,
+  "max_tokens_per_layer": 4096,
+  "calib_num_sequences": 16,
+  "calib_seq_len": 256,
+  "actsvd_r0.50_c4": 1393.3812255859375,
+  "actsvd_r0.50_decode_ms": 20.475750541687013,
+  "actsvd_r0.50_decode_speedup": 0.8119651125327513,
+  "actsvd_gate_r0.50_c4": 1322.273193359375,
+  "actsvd_gate_r0.50_decode_ms": 19.3737642288208,
+  "actsvd_gate_r0.50_decode_speedup": 0.8581499648912249,
+  "spectralite_rho_k0.75_c4": 734.7086181640625,
+  "spectralite_rho_k0.75_decode_ms": 20.44150581359863,
+  "spectralite_rho_k0.75_decode_speedup": 0.813325360879888,
+  "spectralite_rho_gate_k0.75_c4": 677.7188720703125,
+  "spectralite_rho_gate_k0.75_decode_ms": 20.276478958129882,
+  "spectralite_rho_gate_k0.75_decode_speedup": 0.8199448793404726
+}

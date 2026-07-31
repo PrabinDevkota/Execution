@@ -360,7 +360,7 @@ def run_phase11_llama32_1b_ladder(
         print_kv(k, v)
 
     payload = {
-        "phase": "10",
+        "phase": "11",
         "model_name": model_name,
         "keep_ratio": keep_ratio,
         "rank_ratio": rank_ratio,
@@ -376,7 +376,7 @@ def run_phase11_llama32_1b_ladder(
     write_json("phase11_claim.json", claim)
 
     mark_phase_complete(
-        "10",
+        "11",
         artifacts={
             "summary": "results/phase11_summary.json",
             "claim": "results/phase11_claim.json",
@@ -385,6 +385,10 @@ def run_phase11_llama32_1b_ladder(
         },
         metrics={
             "model_name": model_name,
+            "actsvd_gated_c4": claim.get("actsvd_gate_r0.50_c4"),
+            "actsvd_gated_decode_speedup": claim.get(
+                "actsvd_gate_r0.50_decode_speedup"
+            ),
             "spec_rho_gated_c4": claim.get("spectralite_rho_gate_k0.75_c4"),
             "spec_rho_gated_decode_speedup": claim.get(
                 "spectralite_rho_gate_k0.75_decode_speedup"
@@ -395,9 +399,9 @@ def run_phase11_llama32_1b_ladder(
             "max_tokens_per_layer": max_tokens_per_layer,
         },
         notes=(
-            f"Memory-lean scale ladder on {model_name}: "
+            f"Memory-lean LLaMA-3.2-1B ladder on {model_name}: "
             f"max_tokens/layer={max_tokens_per_layer}, float32 cache, "
-            "zero_shot deferred by default."
+            "zero_shot deferred to Phase 11b."
         ),
         config=cfg,
     )

@@ -192,7 +192,7 @@ def run_phase11b_llama32_1b_zeroshot(
         print_kv(k, v)
 
     payload = {
-        "phase": "10b",
+        "phase": "11b",
         "model_name": model_name,
         "keep_ratio": keep_ratio,
         "rank_ratio": rank_ratio,
@@ -213,7 +213,7 @@ def run_phase11b_llama32_1b_zeroshot(
         best = max(table, key=lambda x: (x.get("zero_shot_avg") or float("-inf")))
 
     mark_phase_complete(
-        "10b",
+        "11b",
         artifacts={
             "summary": "results/phase11b_summary.json",
             "table": "results/phase11b_table.json",
