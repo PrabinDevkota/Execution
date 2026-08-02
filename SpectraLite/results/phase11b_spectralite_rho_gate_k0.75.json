@@ -1,0 +1,99 @@
+{
+  "method": "spectralite_rho_gate_k0.75",
+  "tasks": [
+    "piqa",
+    "arc_easy",
+    "arc_challenge",
+    "hellaswag",
+    "winogrande",
+    "boolq",
+    "openbookqa"
+  ],
+  "num_fewshot": 0,
+  "batch_size": 2,
+  "limit": null,
+  "per_task": {
+    "piqa": {
+      "acc": 0.5114254624591947,
+      "raw": {
+        "name": "piqa",
+        "alias": "piqa",
+        "sample_len": 1838,
+        "acc,none": 0.5478781284004353,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.5114254624591947,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "arc_easy": {
+      "acc": 0.2916666666666667,
+      "raw": {
+        "name": "arc_easy",
+        "alias": "arc_easy",
+        "sample_len": 2376,
+        "acc,none": 0.3042929292929293,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.2916666666666667,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "arc_challenge": {
+      "acc": 0.2295221843003413,
+      "raw": {
+        "name": "arc_challenge",
+        "alias": "arc_challenge",
+        "sample_len": 1172,
+        "acc,none": 0.197098976109215,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.2295221843003413,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "hellaswag": {
+      "acc": 0.27703644692292373,
+      "raw": {
+        "name": "hellaswag",
+        "alias": "hellaswag",
+        "sample_len": 10042,
+        "acc,none": 0.262796255725951,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.27703644692292373,
+        "acc_norm_stderr,none": "N/A"
+      }
+    },
+    "winogrande": {
+      "acc": 0.5098658247829518,
+      "raw": {
+        "name": "winogrande",
+        "alias": "winogrande",
+        "sample_len": 1267,
+        "acc,none": 0.5098658247829518,
+        "acc_stderr,none": "N/A"
+      }
+    },
+    "boolq": {
+      "acc": 0.43394495412844036,
+      "raw": {
+        "name": "boolq",
+        "alias": "boolq",
+        "sample_len": 3270,
+        "acc,none": 0.43394495412844036,
+        "acc_stderr,none": "N/A"
+      }
+    },
+    "openbookqa": {
+      "acc": 0.27,
+      "raw": {
+        "name": "openbookqa",
+        "alias": "openbookqa",
+        "sample_len": 500,
+        "acc,none": 0.132,
+        "acc_stderr,none": "N/A",
+        "acc_norm,none": 0.27,
+        "acc_norm_stderr,none": "N/A"
+      }
+    }
+  },
+  "zero_shot_avg": 0.36049450560864554,
+  "notes": "Phase 11b Spec-ρ+gate keep=0.75 kappa_speed=1.0 replaced=97 gated_dense=15"
+}

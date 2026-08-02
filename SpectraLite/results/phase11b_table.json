@@ -1,0 +1,46 @@
+{
+  "table": [
+    {
+      "method": "dense",
+      "zero_shot_avg": 0.5703136010934257,
+      "piqa": 0.7480957562568009,
+      "arc_easy": 0.6178451178451179,
+      "arc_challenge": 0.36689419795221845,
+      "hellaswag": 0.6417048396733719,
+      "winogrande": 0.6077348066298343,
+      "boolq": 0.6379204892966361,
+      "openbookqa": 0.372
+    },
+    {
+      "method": "actsvd_gate_r0.50",
+      "zero_shot_avg": 0.3486433756746307,
+      "piqa": 0.5048966267682263,
+      "arc_easy": 0.2904040404040404,
+      "arc_challenge": 0.23720136518771331,
+      "hellaswag": 0.264389563831906,
+      "winogrande": 0.5011838989739542,
+      "boolq": 0.3804281345565749,
+      "openbookqa": 0.262
+    },
+    {
+      "method": "spectralite_rho_gate_k0.75",
+      "zero_shot_avg": 0.36049450560864554,
+      "piqa": 0.5114254624591947,
+      "arc_easy": 0.2916666666666667,
+      "arc_challenge": 0.2295221843003413,
+      "hellaswag": 0.27703644692292373,
+      "winogrande": 0.5098658247829518,
+      "boolq": 0.43394495412844036,
+      "openbookqa": 0.27
+    }
+  ],
+  "tasks": [
+    "piqa",
+    "arc_easy",
+    "arc_challenge",
+    "hellaswag",
+    "winogrande",
+    "boolq",
+    "openbookqa"
+  ]
+}
